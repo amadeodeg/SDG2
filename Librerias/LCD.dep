@@ -1,0 +1,2326 @@
+//------------------------------- Código C GNU -------------------------------//
+
+C:\ARCHIV~1\DIE-UPM\EDCOLD~1\TUTORI~2\LCD.elf:     file format elf32-m68k
+
+00020000 <__start>	moveal #196608,%sp
+00020006 		movew #8192,%sr
+0002000a 		jsr 00020818 <__init>
+00020010 <bucle>	jsr 00020828 <bucleMain>
+00020016 		bras 00020010 <bucle>
+00020018 		rts
+0002001a <_prep_TOUT0>	addal #-60,%sp
+00020020 		moveml %d0-%fp,%sp@
+00020024 		jsr 000208b6 <rutina_tout0>
+0002002a 		moveml %sp@,%d0-%fp
+0002002e 		addal #60,%sp
+00020034 		rte
+00020036 <_prep_TOUT1>	addal #-60,%sp
+0002003c 		moveml %d0-%fp,%sp@
+00020040 		jsr 000208be <rutina_tout1>
+00020046 		moveml %sp@,%d0-%fp
+0002004a 		addal #60,%sp
+00020050 		rte
+00020052 <_prep_TOUT2>	addal #-60,%sp
+00020058 		moveml %d0-%fp,%sp@
+0002005c 		jsr 000208c6 <rutina_tout2>
+00020062 		moveml %sp@,%d0-%fp
+00020066 		addal #60,%sp
+0002006c 		rte
+0002006e <_prep_TOUT3>	addal #-60,%sp
+00020074 		moveml %d0-%fp,%sp@
+00020078 		jsr 000208ce <rutina_tout3>
+0002007e 		moveml %sp@,%d0-%fp
+00020082 		addal #60,%sp
+00020088 		rte
+0002008a <_prep_INT1>	addal #-60,%sp
+00020090 		moveml %d0-%fp,%sp@
+00020094 		jsr 00020896 <rutina_int1>
+0002009a 		moveml %sp@,%d0-%fp
+0002009e 		addal #60,%sp
+000200a4 		rte
+000200a6 <_prep_INT2>	addal #-60,%sp
+000200ac 		moveml %d0-%fp,%sp@
+000200b0 		jsr 0002089e <rutina_int2>
+000200b6 		moveml %sp@,%d0-%fp
+000200ba 		addal #60,%sp
+000200c0 		rte
+000200c2 <_prep_INT3>	addal #-60,%sp
+000200c8 		moveml %d0-%fp,%sp@
+000200cc 		jsr 000208a6 <rutina_int3>
+000200d2 		moveml %sp@,%d0-%fp
+000200d6 		addal #60,%sp
+000200dc 		rte
+000200de <_prep_INT4>	addal #-60,%sp
+000200e4 		moveml %d0-%fp,%sp@
+000200e8 		jsr 000208ae <rutina_int4>
+000200ee 		moveml %sp@,%d0-%fp
+000200f2 		addal #60,%sp
+000200f8 		rte
+000200fa 		rts
+// Salida:      void
+// Devuelve:    void
+//------------------------------------------------------------------------------
+INLINE void _exit(int status)
+{
+000200fc <_exit>	linkw %fp,#0
+  asm volatile( "moveb #0,%%d1\n\t" "movel #0, %%d0\n\t" "trap #15\n\t"
+00020100 		moveb #0,%d1
+00020104 		moveq #0,%d0
+00020106 		trap #15
+                ::: "d0", "d1");
+}
+00020108 		unlk %fp
+0002010a 		rts
+
+//------------------------------------------------------------------------------
+// INLINE char inch(void)
+//
+// Descripción: lee una tecla del teclado del PC
+// Entrada:     void
+// Salida:      void
+// Devuelve:    char, carácter leído
+// Comentario:  El comportamiento de inch() es sin echo y puede reproducirse
+//              en ANSI C
+//------------------------------------------------------------------------------
+INLINE char inch(void)
+{
+0002010c <inch>	linkw %fp,#-4
+00020110 		movel %d2,%sp@-
+  char ch;
+  asm volatile( "movel #0x10, %%d0\n\t" "trap #15\n\t" "movel %%d1,%0\n\t"
+00020112 		moveq #16,%d0
+00020114 		trap #15
+00020116 		movel %d1,%d2
+00020118 		moveb %d2,%d0
+0002011a 		moveb %d0,%fp@(-1)
+                : "=d" (ch) :
+                : "d0", "d1");
+  return (char) ch;
+0002011e 		moveb %fp@(-1),%d1
+00020122 		extbl %d1
+00020124 		movel %d1,%d0
+00020126 		braw 0002012a <inch+0x1e>
+}
+0002012a 		movel %sp@+,%d2
+0002012c 		unlk %fp
+0002012e 		rts
+
+//------------------------------------------------------------------------------
+// INLINE char inche(void)
+//
+// Descripción: lee una tecla del teclado del PC y la escribe en el terminal
+// Entrada:     void
+// Salida:      void
+// Devuelve:    char, carácter leído
+// Comentario:  El comportamiento de inche() es con eco y puede reproducirse
+//              en ANSI C
+//------------------------------------------------------------------------------
+INLINE char inche(void)
+{
+00020130 <inche>	linkw %fp,#-4
+  char ch;
+  ch=inch();
+00020134 		jsr %pc@(0002010c <inch>)
+00020138 		moveb %d0,%fp@(-1)
+  outch(ch);
+0002013c 		moveb %fp@(-1),%d0
+00020140 		extbl %d0
+00020142 		movel %d0,%sp@-
+00020144 		jsr 0002015c <outch>
+0002014a 		addql #4,%sp
+  return (char) ch;
+0002014c 		moveb %fp@(-1),%d1
+00020150 		extbl %d1
+00020152 		movel %d1,%d0
+00020154 		braw 00020158 <inche+0x28>
+}
+00020158 		unlk %fp
+0002015a 		rts
+
+//------------------------------------------------------------------------------
+// INLINE void outch(char ch)
+//
+// Descripción: imprime carácteren la pantalla del PC
+// Entrada:     char ch, carácter que imprimir
+// Salida:      void
+// Devuelve:    void
+//------------------------------------------------------------------------------
+INLINE void outch(char ch)
+{
+0002015c <outch>	linkw %fp,#-4
+00020160 		movel %d2,%sp@-
+00020162 		movel %fp@(8),%d0
+00020166 		moveb %d0,%fp@(-1)
+  asm volatile( "moveb %0,%%d1\n\t" "movel #0x13, %%d0\n\t" "trap #15\n\t"
+0002016a 		moveb %fp@(-1),%d2
+0002016e 		moveb %d2,%d1
+00020170 		moveq #19,%d0
+00020172 		trap #15
+                : : "d" (ch)
+                : "d0", "d1");
+}
+00020174 		movel %sp@+,%d2
+00020176 		unlk %fp
+00020178 		rts
+
+//------------------------------------------------------------------------------
+// void outNum(UINT base, long num, UBYTE opciones)
+//
+// Descripción: 
+//   Imprime en el terminal el valor de 'num' en la base indicada con o sin 
+//   signo y en mayúsculas o minúsculas.
+//
+// Entrada:     
+//   UINT base, 
+//     base del número 'num'
+//   long num,
+//     número a imprimir
+//   UBYTE opciones,
+//     Combinación de los flags SIN_SIGNO y MAYUSC indicando si la impresión
+//     es sin signo y/o en mayúsculas. 
+//     Valor 0 para minúsculas con signo.
+//
+// Modificado por: Javier Guillén Álvarez
+//------------------------------------------------------------------------------
+// ALIAS para mantener compatibilidad con versiones anteriores de la biblioteca
+#define print_number(base,sinSigno,num) outNum(base,num,sinSigno)
+
+void outNum(UINT base, long num, UBYTE opciones)
+{
+0002017a <outNum>	linkw %fp,#-52
+0002017e 		movel %fp@(16),%d0
+00020182 		moveb %d0,%fp@(-1)
+  char* chars = "0123456789abcdef";
+00020186 		movel #136942,%d0
+0002018c 		movel %d0,%fp@(-6)
+  char* charsMayusc = "0123456789ABCDEF";
+00020190 		movel #136959,%d1
+00020196 		movel %d1,%fp@(-10)
+
+  char *p, buf[32];
+  unsigned long x;
+
+  if (!(opciones & SIN_SIGNO) && num < 0){
+0002019a 		moveb %fp@(-1),%d0
+0002019e 		moveq #1,%d1
+000201a0 		andl %d0,%d1
+000201a2 		tstb %d1
+000201a4 		bnes 000201c2 <outNum+0x48>
+000201a6 		tstl %fp@(12)
+000201aa 		bges 000201c2 <outNum+0x48>
+      outch ('-');
+000201ac 		pea 0000002d <OPER2+0x19>
+000201b0 		jsr %pc@(0002015c <outch>)
+000201b4 		addql #4,%sp
+      x = -num;
+000201b6 		movel %fp@(12),%d0
+000201ba 		negl %d0
+000201bc 		movel %d0,%fp@(-50)
+  }else
+000201c0 		bras 000201ca <outNum+0x50>
+    x = num;
+000201c2 		movel %fp@(12),%d1
+000201c6 		movel %d1,%fp@(-50)
+
+  p = buf + sizeof (buf);
+000201ca 		moveq #-46,%d0
+000201cc 		addl %fp,%d0
+000201ce 		moveq #32,%d1
+000201d0 		addl %d0,%d1
+000201d2 		movel %d1,%fp@(-14)
+  *--p = '\0';
+000201d6 		moveq #-1,%d0
+000201d8 		addl %d0,%fp@(-14)
+000201dc 		moveal %fp@(-14),%a0
+000201e0 		clrb %a0@
+  do{
+    if(opciones & MAYUSC){
+000201e2 		moveb %fp@(-1),%d0
+000201e6 		moveq #2,%d1
+000201e8 		andl %d0,%d1
+000201ea 		tstb %d1
+000201ec 		beqs 00020212 <outNum+0x98>
+      *--p = charsMayusc[x % base];
+000201ee 		moveq #-1,%d1
+000201f0 		addl %d1,%fp@(-14)
+000201f4 		moveal %fp@(-14),%a0
+000201f8 		movel %fp@(-50),%d0
+000201fc 		lea %fp@(8),%a1
+00020200 		divull %a1@,%d1,%d0
+00020204 		divull %a1@,%d0,%d0
+00020208 		moveal %fp@(-10),%a1
+0002020c 		moveb %a1@(00000000,%d1:l),%a0@
+    }else{
+00020210 		bras 00020234 <outNum+0xba>
+      *--p = chars[x % base];
+00020212 		moveq #-1,%d0
+00020214 		addl %d0,%fp@(-14)
+00020218 		moveal %fp@(-14),%a0
+0002021c 		movel %fp@(-50),%d0
+00020220 		lea %fp@(8),%a1
+00020224 		divull %a1@,%d1,%d0
+00020228 		divull %a1@,%d0,%d0
+0002022c 		moveal %fp@(-6),%a1
+00020230 		moveb %a1@(00000000,%d1:l),%a0@
+    }
+    x /= base;
+00020234 		lea %fp@(8),%a0
+00020238 		lea %fp@(-50),%a1
+0002023c 		movel %a1@,%d1
+0002023e 		divull %a0@,%d0,%d1
+00020242 		divull %a0@,%d1,%d1
+00020246 		movel %d1,%fp@(-50)
+  }while (x != 0);
+0002024a 		tstl %fp@(-50)
+0002024e 		bnes 00020252 <outNum+0xd8>
+00020250 		bras 00020254 <outNum+0xda>
+00020252 		bras 000201e2 <outNum+0x68>
+  output (p);
+00020254 		movel %fp@(-14),%sp@-
+00020258 		jsr 0002033e <output>
+0002025e 		addql #4,%sp
+}
+00020260 		unlk %fp
+00020262 		rts
+
+//----------------------------------------------------------------------------------
+// void outNumDec(UINT base, double n, UINT dec, UBYTE opciones)
+//
+// Descripción:
+//   Imprime en el terminal el número 'n' con 'dec' cifras
+//   decimales en base 'base' con/sin signo y en mayúsculas/minúsculas.
+// 
+// NOTA: El redondeo siempre es hacia abajo en la última cifra
+//
+// Autor: Javier Guillén Álvarez
+//----------------------------------------------------------------------------------
+// ALIAS para cuando no se especifican opciones
+void outNumDec(UINT base, double n, UINT dec, UBYTE opciones)
+{
+00020264 <outNumDec>	linkw %fp,#-12
+00020268 		movel %fp@(24),%d0
+0002026c 		moveb %d0,%fp@(-1)
+  // Imprime la parte entera
+  outNum(base, (int)n, opciones);  
+00020270 		clrl %d0
+00020272 		moveb %fp@(-1),%d0
+00020276 		movel %d0,%sp@-
+00020278 		movel %fp@(16),%sp@-
+0002027c 		movel %fp@(12),%sp@-
+00020280 		jsr 0002164e <__fixdfsi>
+00020286 		addql #8,%sp
+00020288 		movel %d0,%sp@-
+0002028a 		movel %fp@(8),%sp@-
+0002028e 		jsr %pc@(0002017a <outNum>)
+00020292 		lea %sp@(12),%sp
+  
+  if(dec != 0){
+00020296 		tstl %fp@(20)
+0002029a 		beqw 0002033a <outNumDec+0xd6>
+    double dDecimal = n - (int)n;
+0002029e 		movel %fp@(16),%sp@-
+000202a2 		movel %fp@(12),%sp@-
+000202a6 		jsr 0002164e <__fixdfsi>
+000202ac 		addql #8,%sp
+000202ae 		movel %d0,%sp@-
+000202b0 		jsr 000214d4 <__floatsidf>
+000202b6 		addql #4,%sp
+000202b8 		movel %d1,%sp@-
+000202ba 		movel %d0,%sp@-
+000202bc 		movel %fp@(16),%sp@-
+000202c0 		movel %fp@(12),%sp@-
+000202c4 		jsr 00020932 <__subdf3>
+000202ca 		lea %sp@(16),%sp
+000202ce 		movel %d0,%fp@(-10)
+000202d2 		movel %d1,%fp@(-6)
+
+    // Multiplica la parte decimal por 10^dec
+    while(dec--){
+000202d6 		moveq #-1,%d0
+000202d8 		addl %d0,%fp@(20)
+000202dc 		moveq #-1,%d0
+000202de 		cmpl %fp@(20),%d0
+000202e2 		bnes 000202e6 <outNumDec+0x82>
+000202e4 		bras 0002030a <outNumDec+0xa6>
+      dDecimal *= 10;
+000202e6 		clrl %sp@-
+000202e8 		movel #1076101120,%sp@-
+000202ee 		movel %fp@(-6),%sp@-
+000202f2 		movel %fp@(-10),%sp@-
+000202f6 		jsr 00020dc8 <__muldf3>
+000202fc 		lea %sp@(16),%sp
+00020300 		movel %d0,%fp@(-10)
+00020304 		movel %d1,%fp@(-6)
+    }
+00020308 		bras 000202d6 <outNumDec+0x72>
+
+    // Imprime la marca de decimal
+    outch('.');
+0002030a 		pea 0000002e <OPER2+0x1a>
+0002030e 		jsr %pc@(0002015c <outch>)
+00020312 		addql #4,%sp
+
+    // Imprime 'dec' decimales
+    outNum(base, (int)dDecimal, opciones);
+00020314 		clrl %d0
+00020316 		moveb %fp@(-1),%d0
+0002031a 		movel %d0,%sp@-
+0002031c 		movel %fp@(-6),%sp@-
+00020320 		movel %fp@(-10),%sp@-
+00020324 		jsr 0002164e <__fixdfsi>
+0002032a 		addql #8,%sp
+0002032c 		movel %d0,%sp@-
+0002032e 		movel %fp@(8),%sp@-
+00020332 		jsr %pc@(0002017a <outNum>)
+00020336 		lea %sp@(12),%sp
+  }
+}
+0002033a 		unlk %fp
+0002033c 		rts
+
+//------------------------------------------------------------------------------
+// INLINE void output(char *start)
+//
+// Descripción: imprime un texto en la pantalla del PC
+// Entrada:     char *start, texto que imprimir, terminado en 0
+// Salida:      void
+// Devuelve:    void
+//------------------------------------------------------------------------------
+INLINE void output(char *start)
+{
+0002033e <output>	linkw %fp,#-4
+  if (start!=0){
+00020342 		tstl %fp@(8)
+00020346 		beqs 0002037a <output+0x3c>
+    int i=0;
+00020348 		clrl %fp@(-4)
+    for (i=0; start[i]!=0; i++){
+0002034c 		clrl %fp@(-4)
+00020350 		moveal %fp@(8),%a0
+00020354 		addal %fp@(-4),%a0
+00020358 		tstb %a0@
+0002035a 		bnes 0002035e <output+0x20>
+0002035c 		bras 0002037a <output+0x3c>
+       outch(start[i]);
+0002035e 		moveal %fp@(8),%a0
+00020362 		addal %fp@(-4),%a0
+00020366 		moveb %a0@,%d0
+00020368 		extbl %d0
+0002036a 		movel %d0,%sp@-
+0002036c 		jsr %pc@(0002015c <outch>)
+00020370 		addql #4,%sp
+00020372 		moveq #1,%d0
+00020374 		addl %d0,%fp@(-4)
+00020378 		bras 00020350 <output+0x12>
+    }
+  }
+}
+0002037a 		unlk %fp
+0002037c 		rts
+
+//------------------------------------------------------------------------------
+// INLINE void retardo(UINT microsegundos) 
+//
+// Descripción: Introduce un retardo de los microsegundos indicados aproximadamente
+//
+// NOTA: La fórmula de cálculo de 'ret' proporciona un error de +-5% si
+//       microsegundos >= 100. El error aumenta para tiempos menores.
+//
+// Autor: Javier Guillén Álvarez
+//------------------------------------------------------------------------------
+INLINE void retardo(UINT microsegundos) 
+{
+0002037e <retardo>	linkw %fp,#-4
+  UINT ret = (44 * microsegundos - 32)/16;
+00020382 		movel %fp@(8),%d1
+00020386 		movel %d1,%d0
+00020388 		lsll #2,%d0
+0002038a 		addl %d1,%d0
+0002038c 		addl %d0,%d0
+0002038e 		addl %d1,%d0
+00020390 		movel %d0,%d1
+00020392 		lsll #2,%d1
+00020394 		moveq #-32,%d0
+00020396 		addl %d1,%d0
+00020398 		movel %d0,%d1
+0002039a 		lsrl #4,%d1
+0002039c 		movel %d1,%fp@(-4)
+  while(ret--);
+000203a0 		moveq #-1,%d0
+000203a2 		addl %d0,%fp@(-4)
+000203a6 		moveq #-1,%d0
+000203a8 		cmpl %fp@(-4),%d0
+000203ac 		bnes 000203b0 <retardo+0x32>
+000203ae 		bras 000203b2 <retardo+0x34>
+000203b0 		bras 000203a0 <retardo+0x22>
+}
+000203b2 		unlk %fp
+000203b4 		rts
+
+//------------------------------------------------------------------------------
+// INLINE LONG _strlen(char *st)
+//
+// Descripción: Calcula la longitud de una cadena de char terminada en 0
+// Entrada:     char *st, puntero a la cadena de texto que medir (acabada en 0)
+// Salida:      void
+// Devuelve:    LONG, número de caracteres de la cadena (sin contar el 0 final)
+//------------------------------------------------------------------------------
+INLINE LONG _strlen(char *st)
+{
+000203b6 <_strlen>	linkw %fp,#-8
+  LONG len = 0;
+000203ba 		clrl %fp@(-4)
+  char *pt = st;
+000203be 		movel %fp@(8),%d0
+000203c2 		movel %d0,%fp@(-8)
+  while (*pt++) len++;
+000203c6 		moveal %fp@(-8),%a0
+000203ca 		moveq #1,%d0
+000203cc 		addl %d0,%fp@(-8)
+000203d0 		tstb %a0@
+000203d2 		bnes 000203d6 <_strlen+0x20>
+000203d4 		bras 000203de <_strlen+0x28>
+000203d6 		moveq #1,%d0
+000203d8 		addl %d0,%fp@(-4)
+000203dc 		bras 000203c6 <_strlen+0x10>
+  return len;
+000203de 		movel %fp@(-4),%d1
+000203e2 		movel %d1,%d0
+000203e4 		braw 000203e8 <_strlen+0x32>
+}
+000203e8 		unlk %fp
+000203ea 		rts
+
+//------------------------------------------------------------------------------
+// INLINE LONG memcpy(char *st)
+//
+// Descripción: Inicializa una zona de memoria con un valor determinado
+// Entrada:     char *dest, char *src fuente de la información, size_t tamaño a copiar
+// Salida:      void 
+// Devuelve:    void puntero a la zona de memoria
+//------------------------------------------------------------------------------
+INLINE void *memcpy(void *dst0, const void *src0, size_t n)
+{
+000203ec <memcpy>	linkw %fp,#-8
+  char* dst = (char*) dst0;
+000203f0 		movel %fp@(8),%d0
+000203f4 		movel %d0,%fp@(-4)
+  const char* src = (const char*) src0;
+000203f8 		movel %fp@(12),%d0
+000203fc 		movel %d0,%fp@(-8)
+  while (n--) *dst++ = *src++;
+00020400 		moveq #-1,%d0
+00020402 		addl %d0,%fp@(16)
+00020406 		moveq #-1,%d0
+00020408 		cmpl %fp@(16),%d0
+0002040c 		bnes 00020410 <memcpy+0x24>
+0002040e 		bras 00020428 <memcpy+0x3c>
+00020410 		moveal %fp@(-4),%a0
+00020414 		moveal %fp@(-8),%a1
+00020418 		moveb %a1@,%a0@
+0002041a 		moveq #1,%d0
+0002041c 		addl %d0,%fp@(-8)
+00020420 		moveq #1,%d0
+00020422 		addl %d0,%fp@(-4)
+00020426 		bras 00020400 <memcpy+0x14>
+  return dst0;
+00020428 		movel %fp@(8),%d1
+0002042c 		movel %d1,%d0
+0002042e 		braw 00020432 <memcpy+0x46>
+}
+00020432 		unlk %fp
+00020434 		rts
+
+//------------------------------------------------------------------------------
+// INLINE LONG memset(char *st)
+//
+// Descripción: Sets the first num bytes pointed by buffer to the value specified by c parameter.
+// Entrada:     char *buffer, int c, size_t número de bytes
+// Salida:      void 
+// Devuelve:    void puntero a la zona de memoria
+//------------------------------------------------------------------------------
+INLINE void *memset(void *dst0, int c, size_t n)
+{
+00020436 <memset>	linkw %fp,#-4
+  char* dst = (char*) dst0;
+0002043a 		movel %fp@(8),%d0
+0002043e 		movel %d0,%fp@(-4)
+  while (n--) *dst++ = c;
+00020442 		moveq #-1,%d0
+00020444 		addl %d0,%fp@(16)
+00020448 		moveq #-1,%d0
+0002044a 		cmpl %fp@(16),%d0
+0002044e 		bnes 00020452 <memset+0x1c>
+00020450 		bras 00020462 <memset+0x2c>
+00020452 		moveal %fp@(-4),%a0
+00020456 		moveb %fp@(15),%a0@
+0002045a 		moveq #1,%d0
+0002045c 		addl %d0,%fp@(-4)
+00020460 		bras 00020442 <memset+0xc>
+  return dst0;
+00020462 		movel %fp@(8),%d1
+00020466 		movel %d1,%d0
+00020468 		braw 0002046c <memset+0x36>
+}
+0002046c 		unlk %fp
+0002046e 		rts
+//
+// Autor: Javier Guillén Álvarez
+//-------------------------------------------------------------
+void set_puertoS_H (UBYTE valor)
+{
+00020470 <set_puertoS_H>	linkw %fp,#-8
+00020474 		movel %fp@(8),%d0
+00020478 		moveb %d0,%fp@(-1)
+  UWORD* pchar;
+  puertoS &= 0x00FF;
+0002047c 		movew 0003001c <__bss_start>,%d0
+00020482 		movel %d0,%d1
+00020484 		andil #255,%d1
+0002048a 		movew %d1,0003001c <__bss_start>
+  puertoS |= (UWORD) (valor << 8);  
+00020490 		clrw %d0
+00020492 		moveb %fp@(-1),%d0
+00020496 		lsll #8,%d0
+00020498 		movew 0003001c <__bss_start>,%d1
+0002049e 		orl %d0,%d1
+000204a0 		movew %d1,0003001c <__bss_start>
+  pchar=(UWORD*)BASE_PUERTO_S;
+000204a6 		movel #1073741824,%d0
+000204ac 		movel %d0,%fp@(-6)
+  (*pchar)=puertoS;
+000204b0 		moveal %fp@(-6),%a0
+000204b4 		movew 0003001c <__bss_start>,%a0@
+}
+000204ba 		unlk %fp
+000204bc 		rts
+
+//-------------------------------------------------------------
+// void set_puertoS (UBYTE valor)
+//
+// Descripción:
+//   Escribe en el byte bajo del puerto de salida
+//
+// Autor: Javier Guillén Álvarez
+//-------------------------------------------------------------
+// ALIAS para mantener compatibilidad con versiones anteriores
+// de la librería.
+#define set_puertoS_L(valor) set_puertoS(valor)
+
+void set_puertoS (UBYTE valor)
+{
+000204be <set_puertoS>	linkw %fp,#-8
+000204c2 		movel %fp@(8),%d0
+000204c6 		moveb %d0,%fp@(-1)
+  UWORD* pchar;
+  puertoS &= 0xFF00;
+000204ca 		movew 0003001c <__bss_start>,%d0
+000204d0 		movel %d0,%d1
+000204d2 		andil #65280,%d1
+000204d8 		movew %d1,0003001c <__bss_start>
+  puertoS |= (UWORD) valor;  
+000204de 		clrw %d0
+000204e0 		moveb %fp@(-1),%d0
+000204e4 		movew 0003001c <__bss_start>,%d1
+000204ea 		orl %d1,%d0
+000204ec 		movew %d0,0003001c <__bss_start>
+  pchar=(UWORD*)BASE_PUERTO_S;
+000204f2 		movel #1073741824,%d0
+000204f8 		movel %d0,%fp@(-6)
+  (*pchar)=puertoS;
+000204fc 		moveal %fp@(-6),%a0
+00020500 		movew 0003001c <__bss_start>,%a0@
+}
+00020506 		unlk %fp
+00020508 		rts
+
+//-------------------------------------------------------------------
+// void set_puertoS_L (UBYTE valor)
+//
+// Alias de 'set_puertoS(UBYTE valor)' para mantener compatibilidad
+// con versiones anteriores de la librería.
+//-------------------------------------------------------------------
+
+void set16_puertoS (UWORD valor)
+{
+0002050a <set16_puertoS>	linkw %fp,#-8
+0002050e 		movel %fp@(8),%d0
+00020512 		movew %d0,%fp@(-2)
+  UWORD* pchar;
+  puertoS = valor;
+00020516 		movew %fp@(-2),%d0
+0002051a 		movew %d0,0003001c <__bss_start>
+  pchar=(UWORD*)BASE_PUERTO_S;
+00020520 		movel #1073741824,%d0
+00020526 		movel %d0,%fp@(-6)
+  (*pchar)=puertoS;
+0002052a 		moveal %fp@(-6),%a0
+0002052e 		movew 0003001c <__bss_start>,%a0@
+}
+00020534 		unlk %fp
+00020536 		rts
+
+//------------------------------------------
+// UWORD lee16_puertoE (void)
+//
+// Descripción:
+//   Lee los 16 bits del puerto de entrada
+//------------------------------------------
+UWORD lee16_puertoE (void)
+{
+00020538 <lee16_puertoE>	linkw %fp,#0
+  return *((UWORD*) BASE_PUERTO_E);
+0002053c 		clrl %d0
+0002053e 		movew 50000002 <_end+0x4ffcffe2>,%d0
+00020544 		braw 00020548 <lee16_puertoE+0x10>
+}
+00020548 		unlk %fp
+0002054a 		rts
+
+//-------------------------------------------
+// UBYTE lee_puertoE (void)
+//
+// Descripción:
+//   Lee el byte bajo del puerto de entrada
+//-------------------------------------------
+UBYTE lee_puertoE (void)
+{
+0002054c <lee_puertoE>	linkw %fp,#0
+  return  (UBYTE)*((UWORD*) BASE_PUERTO_E);
+00020550 		clrl %d0
+00020552 		moveb 50000003 <_end+0x4ffcffe3>,%d0
+00020558 		braw 0002055c <lee_puertoE+0x10>
+}
+0002055c 		unlk %fp
+0002055e 		rts
+
+//-------------------------------------------------
+// void gpio_setup(void)
+// 
+// Descripción:
+//  Configuración del módulo de entrada/salida de 
+//   propósito general del M5272 (GPIO) 
+//
+//-------------------------------------------------
+void gpio_setup(void)
+{  
+00020560 <gpio_setup>	linkw %fp,#0
+  // Configuracion del puerto A
+  mbar_writeLong(MCFSIM_PACNT, 0x00000000);	// Puerto A como Puerto IO
+00020564 		clrl 10000080 <_end+0xffd0060>
+  mbar_writeShort(MCFSIM_PADDR, 0x7E80);	// Son todo entradas
+0002056a 		movew #32384,%d0
+0002056e 		movew %d0,10000084 <_end+0xffd0064>
+
+  // Configuracion del puerto B
+  // El puerto B comparte los pines Ethernet y la primera UART
+  mbar_writeLong(MCFSIM_PBCNT, 0x55554155); 
+00020574 		movel #1431650645,%d0
+0002057a 		movel %d0,10000088 <_end+0xffd0068>
+  mbar_writeShort(MCFSIM_PBDDR, 0x0000); 	// Sólo afecta a PB5 y PB6 (in)
+00020580 		clrw %d0
+00020582 		movew %d0,1000008c <_end+0xffd006c>
+}
+00020588 		unlk %fp
+0002058a 		rts
+
+//----------------------------------------------------
+//          Rutinas de I/O de los puertos 0 y 1
+//----------------------------------------------------
+UBYTE lee_puerto1(void)
+{
+0002058c <lee_puerto1>	linkw %fp,#-4
+  UWORD puerto,mascara;
+  puerto=(UWORD)(mbar_readLong(MCFSIM_PADAT)>>16);
+00020590 		movel 10000086 <_end+0xffd0066>,%d1
+00020596 		movel %d1,%d0
+00020598 		clrw %d0
+0002059a 		swap %d0
+0002059c 		movew %d0,%fp@(-2)
+  mascara=((puerto>>1)&0x80);	// Valor IOPRT 15
+000205a0 		clrl %d0
+000205a2 		movew %fp@(-2),%d0
+000205a6 		lsrl #1,%d0
+000205a8 		movew %d0,%d1
+000205aa 		movel %d1,%d0
+000205ac 		andil #128,%d0
+000205b2 		movew %d0,%fp@(-4)
+  puerto&=0x7F; 		// IO_PORT14-IOPORT8
+000205b6 		movew %fp@(-2),%d0
+000205ba 		moveq #127,%d1
+000205bc 		andl %d0,%d1
+000205be 		movew %d1,%fp@(-2)
+  puerto|=mascara;
+000205c2 		movew %fp@(-2),%d0
+000205c6 		movew %fp@(-4),%d1
+000205ca 		orl %d1,%d0
+000205cc 		movew %d0,%fp@(-2)
+  return ((UBYTE)(puerto&0xFF));
+000205d0 		clrl %d0
+000205d2 		moveb %fp@(-1),%d0
+000205d6 		braw 000205da <lee_puerto1+0x4e>
+}
+000205da 		unlk %fp
+000205dc 		rts
+
+void set_puerto1 (UBYTE valor)
+{
+000205de <set_puerto1>	linkw %fp,#-8
+000205e2 		movel %fp@(8),%d0
+000205e6 		moveb %d0,%fp@(-1)
+  UWORD puerto,mascara;
+  puerto=(UWORD)(mbar_readLong(MCFSIM_PADAT)>>16);
+000205ea 		movel 10000086 <_end+0xffd0066>,%d1
+000205f0 		movel %d1,%d0
+000205f2 		clrw %d0
+000205f4 		swap %d0
+000205f6 		movew %d0,%fp@(-4)
+  mascara=valor;
+000205fa 		clrw %d0
+000205fc 		moveb %fp@(-1),%d0
+00020600 		movew %d0,%fp@(-6)
+  mascara<<=1;
+00020604 		movew %fp@(-6),%d0
+00020608 		movel %d0,%d1
+0002060a 		addl %d1,%d1
+0002060c 		movew %d1,%fp@(-6)
+  mascara&=0x00100; // Valor IOPRT 15
+00020610 		movew %fp@(-6),%d0
+00020614 		movel %d0,%d1
+00020616 		andil #256,%d1
+0002061c 		movew %d1,%fp@(-6)
+  mascara|=((UWORD)valor&0x7F); 
+00020620 		moveb %fp@(-1),%d0
+00020624 		moveq #127,%d1
+00020626 		andl %d0,%d1
+00020628 		clrw %d0
+0002062a 		moveb %d1,%d0
+0002062c 		movew %fp@(-6),%d1
+00020630 		orl %d1,%d0
+00020632 		movew %d0,%fp@(-6)
+  puerto&=0xFE80; // Ponemos a cero el valor leido
+00020636 		movew %fp@(-4),%d0
+0002063a 		movel %d0,%d1
+0002063c 		andil #65152,%d1
+00020642 		movew %d1,%fp@(-4)
+  puerto|=mascara;
+00020646 		movew %fp@(-4),%d0
+0002064a 		movew %fp@(-6),%d1
+0002064e 		orl %d1,%d0
+00020650 		movew %d0,%fp@(-4)
+  mbar_writeShort(MCFSIM_PADAT,puerto);
+00020654 		movew %fp@(-4),%d0
+00020658 		movew %d0,10000086 <_end+0xffd0066>
+}
+0002065e 		unlk %fp
+00020660 		rts
+
+void set_puerto0 (UBYTE valor)
+{
+00020662 <set_puerto0>	linkw %fp,#-8
+00020666 		movel %fp@(8),%d0
+0002066a 		moveb %d0,%fp@(-1)
+  UBYTE* pchar;
+  pchar=(UBYTE*)BASE_PUERTO0;
+0002066e 		movel #805306368,%d0
+00020674 		movel %d0,%fp@(-6)
+  (*pchar)=valor;
+00020678 		moveal %fp@(-6),%a0
+0002067c 		moveb %fp@(-1),%a0@
+}
+00020680 		unlk %fp
+00020682 		rts
+
+//--------------------------------------------------------
+// void set_led(UWORD valor)
+//
+// Descripción:
+//   Presenta un valor en los LEDs de información de la
+//   placa Antares. 
+//
+// Por ejemplo: set_led(0x07)
+//
+//     |   SLD0   |   SLD1   |    SLD2    |    SLD3    |
+//     |----------|----------|------------|------------|
+//     |    ON    |    ON    |     ON     |     OFF    | 
+// 
+// Autor: Alberto Quintana Ocaña
+//--------------------------------------------------------
+void set_led(UWORD valor)
+{
+00020684 <set_led>	linkw %fp,#-8
+00020688 		movel %d2,%sp@-
+0002068a 		movel %fp@(8),%d0
+0002068e 		movew %d0,%fp@(-2)
+  UWORD puerto1_valor;	// Valor del puerto IO 1
+  UWORD mascara;	// Máscara con el valor de los LEDs
+			// en las posiciones del puerto 1
+  puerto1_valor=(UWORD) (mbar_readLong(MCFSIM_PADAT)>>16);
+00020692 		movel 10000086 <_end+0xffd0066>,%d1
+00020698 		movel %d1,%d0
+0002069a 		clrw %d0
+0002069c 		swap %d0
+0002069e 		movew %d0,%fp@(-4)
+  mascara=0x0000;
+000206a2 		clrw %d0
+000206a4 		movew %d0,%fp@(-6)
+  valor=valor&0x0F;
+000206a8 		movew %fp@(-2),%d0
+000206ac 		moveq #15,%d1
+000206ae 		andl %d0,%d1
+000206b0 		movew %d1,%fp@(-2)
+  mascara=((valor<<10)&0x3000);
+000206b4 		movew %fp@(-2),%d0
+000206b8 		movel %d0,%d1
+000206ba 		moveq #10,%d2
+000206bc 		lsll %d2,%d1
+000206be 		movew %d1,%d0
+000206c0 		movel %d0,%d1
+000206c2 		andil #12288,%d1
+000206c8 		movew %d1,%fp@(-6)
+  mascara=(((valor<<9)&0x0600)|mascara);
+000206cc 		movew %fp@(-2),%d0
+000206d0 		movel %d0,%d1
+000206d2 		moveq #9,%d2
+000206d4 		lsll %d2,%d1
+000206d6 		movew %d1,%d0
+000206d8 		movel %d0,%d1
+000206da 		andil #1536,%d1
+000206e0 		movew %fp@(-6),%d0
+000206e4 		orl %d1,%d0
+000206e6 		movew %d0,%fp@(-6)
+  puerto1_valor&=0xC9FF;// Ponemos a cero los bits de los LEDS
+000206ea 		movew %fp@(-4),%d0
+000206ee 		movel %d0,%d1
+000206f0 		andil #51711,%d1
+000206f6 		movew %d1,%fp@(-4)
+  puerto1_valor|=mascara;
+000206fa 		movew %fp@(-4),%d0
+000206fe 		movew %fp@(-6),%d1
+00020702 		orl %d1,%d0
+00020704 		movew %d0,%fp@(-4)
+  mbar_writeShort(MCFSIM_PADAT,puerto1_valor);
+00020708 		movew %fp@(-4),%d0
+0002070c 		movew %d0,10000086 <_end+0xffd0066>
+  set_puerto0(valor|(valor<<4));
+00020712 		moveb %fp@(-1),%d0
+00020716 		movel %d0,%d1
+00020718 		lsll #4,%d1
+0002071a 		moveb %fp@(-1),%d0
+0002071e 		orl %d1,%d0
+00020720 		clrl %d1
+00020722 		moveb %d0,%d1
+00020724 		movel %d1,%sp@-
+00020726 		jsr %pc@(00020662 <set_puerto0>)
+0002072a 		addql #4,%sp
+}
+0002072c 		movel %fp@(-12),%d2
+00020730 		unlk %fp
+00020732 		rts
+//     LCD_CHAR si dato es un carácter a escribir
+//     LCD_INST si dato es una instrucción para el LCD
+//------------------------------------------------------
+void LCD_write(UWORD dato, LCD_TIPO tipo)
+{
+00020734 <LCD_write>	linkw %fp,#-4
+00020738 		movel %fp@(8),%d0
+0002073c 		movew %d0,%fp@(-2)
+  UWORD salida;
+  if(tipo == LCD_CHAR){
+00020740 		moveq #64,%d0
+00020742 		cmpl %fp@(12),%d0
+00020746 		bnes 00020754 <LCD_write+0x20>
+    dato = dato << 8;				// El dato debe estar en los 8 bits más significativos
+00020748 		movew %fp@(-2),%d0
+0002074c 		movel %d0,%d1
+0002074e 		lsll #8,%d1
+00020750 		movew %d1,%fp@(-2)
+  }
+  set16_puertoS(dato | tipo | BIT_ENABLE);	// Enable + dato: Activamos LCD e indicamos el tipo de dato
+00020754 		movew %fp@(-2),%d0
+00020758 		movew %fp@(14),%d1
+0002075c 		orl %d1,%d0
+0002075e 		movew %d0,%d1
+00020760 		movel %d1,%d0
+00020762 		oril #128,%d0
+00020768 		clrl %d1
+0002076a 		movew %d0,%d1
+0002076c 		movel %d1,%sp@-
+0002076e 		jsr %pc@(0002050a <set16_puertoS>)
+00020772 		addql #4,%sp
+  retardo(RET_3MS);
+00020774 		pea 00000bb8 <D_MAX_EXP+0x3b9>
+00020778 		jsr %pc@(0002037e <retardo>)
+0002077c 		addql #4,%sp
+  set16_puertoS(dato | tipo);			// Disable: carga el dato en el LCD
+0002077e 		movew %fp@(-2),%d0
+00020782 		movew %fp@(14),%d1
+00020786 		orl %d1,%d0
+00020788 		clrl %d1
+0002078a 		movew %d0,%d1
+0002078c 		movel %d1,%sp@-
+0002078e 		jsr %pc@(0002050a <set16_puertoS>)
+00020792 		addql #4,%sp
+  retardo(RET_3MS);
+00020794 		pea 00000bb8 <D_MAX_EXP+0x3b9>
+00020798 		jsr %pc@(0002037e <retardo>)
+0002079c 		addql #4,%sp
+}
+0002079e 		unlk %fp
+000207a0 		rts
+
+//--------------------------------------
+// void LCD_init()
+//
+// Descripción:
+//   Función de inicialización del LCD
+//--------------------------------------
+void LCD_init()
+{
+000207a2 <LCD_init>	linkw %fp,#0
+  LCD_inst(FS_CONF8);	// Function Set: 8bits, 2líneas, 5x7puntos
+000207a6 		clrl %sp@-
+000207a8 		pea 00003800 <D_MAX_EXP+0x3001>
+000207ac 		jsr %pc@(00020734 <LCD_write>)
+000207b0 		addql #8,%sp
+  LCD_inst(CLR_DISP);	// Clear Display 
+000207b2 		clrl %sp@-
+000207b4 		pea 00000100 <DBL_MANT_DIG+0xcb>
+000207b8 		jsr %pc@(00020734 <LCD_write>)
+000207bc 		addql #8,%sp
+  LCD_inst(MODE_SET);	// Autoincremento del cursor y sin desplazamiento (shift)
+000207be 		clrl %sp@-
+000207c0 		pea 00000600 <DBL_MAX_EXP+0x1ff>
+000207c4 		jsr %pc@(00020734 <LCD_write>)
+000207c8 		addql #8,%sp
+  LCD_inst(CD_ON);	// Activa el display, el cursor y el parpadeo
+000207ca 		clrl %sp@-
+000207cc 		pea 00000f00 <D_MAX_EXP+0x701>
+000207d0 		jsr %pc@(00020734 <LCD_write>)
+000207d4 		addql #8,%sp
+}
+000207d6 		unlk %fp
+000207d8 		rts
+
+//--------------------------------------
+// void LCD_reset()
+//
+// Descripción:
+//   Función de inicialización del LCD
+//--------------------------------------
+void LCD_reset()
+{
+000207da <LCD_reset>	linkw %fp,#-4
+  int i;
+  retardo(RET_15MS);		// Retardo inicial
+000207de 		pea 00003a98 <D_MAX_EXP+0x3299>
+000207e2 		jsr %pc@(0002037e <retardo>)
+000207e6 		addql #4,%sp
+  for(i = 0; i < 3; i++){	// Se repite 3 veces,
+000207e8 		clrl %fp@(-4)
+000207ec 		moveq #2,%d0
+000207ee 		cmpl %fp@(-4),%d0
+000207f2 		bges 000207f6 <LCD_reset+0x1c>
+000207f4 		bras 00020814 <LCD_reset+0x3a>
+    LCD_inst(FS_8BITS);		//   Instrucción para funcionamiento en 8 bits
+000207f6 		clrl %sp@-
+000207f8 		pea 00003000 <D_MAX_EXP+0x2801>
+000207fc 		jsr %pc@(00020734 <LCD_write>)
+00020800 		addql #8,%sp
+    retardo(RET_15MS);		//   Hay que esperar más de 4.1ms
+00020802 		pea 00003a98 <D_MAX_EXP+0x3299>
+00020806 		jsr %pc@(0002037e <retardo>)
+0002080a 		addql #4,%sp
+0002080c 		moveq #1,%d0
+0002080e 		addl %d0,%fp@(-4)
+00020812 		bras 000207ec <LCD_reset+0x12>
+  }
+}
+00020814 		unlk %fp
+00020816 		rts
+// Descripción:
+//   Función por defecto de inicialización del sistema
+//------------------------------------------------------
+void __init(void)
+{
+00020818 <__init>	linkw %fp,#0
+  LCD_reset();	// Reseteamos el LCD
+0002081c 		jsr %pc@(000207da <LCD_reset>)
+  LCD_init();	// e inicializamos el display
+00020820 		jsr %pc@(000207a2 <LCD_init>)
+}
+00020824 		unlk %fp
+00020826 		rts
+
+//------------------------------------------------------
+// void bucleMain(void)
+//
+// Descripción:
+//   Función del programa principal
+//------------------------------------------------------
+void bucleMain(void)
+{
+00020828 <bucleMain>	linkw %fp,#-4
+  char* mensaje = "HOLA";
+0002082c 		movel #136976,%d0
+00020832 		movel %d0,%fp@(-4)
+
+  while(*mensaje){		// Imprime "HOLA" en el display
+00020836 		moveal %fp@(-4),%a0
+0002083a 		tstb %a0@
+0002083c 		bnes 00020840 <bucleMain+0x18>
+0002083e 		bras 0002086c <bucleMain+0x44>
+    LCD_dato(*mensaje++); 	// carácter a carácter
+00020840 		pea 00000040 <DBL_MANT_DIG+0xb>
+00020844 		moveal %fp@(-4),%a0
+00020848 		moveb %a0@,%d0
+0002084a 		extw %d0
+0002084c 		clrl %d1
+0002084e 		movew %d0,%d1
+00020850 		movel %d1,%sp@-
+00020852 		moveq #1,%d0
+00020854 		addl %d0,%fp@(-4)
+00020858 		jsr %pc@(00020734 <LCD_write>)
+0002085c 		addql #8,%sp
+    retardo(RET_1S);		// Mantenemos el mensaje 1 segundo
+0002085e 		movel #1000000,%sp@-
+00020864 		jsr %pc@(0002037e <retardo>)
+00020868 		addql #4,%sp
+  }
+0002086a 		bras 00020836 <bucleMain+0xe>
+
+  LCD_inst(CLR_DISP);		// Limpiamos display
+0002086c 		clrl %sp@-
+0002086e 		pea 00000100 <DBL_MANT_DIG+0xcb>
+00020872 		jsr %pc@(00020734 <LCD_write>)
+00020876 		addql #8,%sp
+  LCD_inst(LIN_1LCD);		// Movemos el cursor a la 1ª línea
+00020878 		clrl %sp@-
+0002087a 		movel #32768,%sp@-
+00020880 		jsr %pc@(00020734 <LCD_write>)
+00020884 		addql #8,%sp
+  retardo(RET_1S);		// Esperamos otro segundo
+00020886 		movel #1000000,%sp@-
+0002088c 		jsr %pc@(0002037e <retardo>)
+00020890 		addql #4,%sp
+}
+00020892 		unlk %fp
+00020894 		rts
+
+//---------------------------------------------------------
+// Definición de rutinas de atención a la interrupción
+// Es necesario definirlas aunque estén vacías
+void rutina_int1(void){}
+00020896 <rutina_int1>	linkw %fp,#0
+0002089a 		unlk %fp
+0002089c 		rts
+void rutina_int2(void){}
+0002089e <rutina_int2>	linkw %fp,#0
+000208a2 		unlk %fp
+000208a4 		rts
+void rutina_int3(void){}
+000208a6 <rutina_int3>	linkw %fp,#0
+000208aa 		unlk %fp
+000208ac 		rts
+void rutina_int4(void){}
+000208ae <rutina_int4>	linkw %fp,#0
+000208b2 		unlk %fp
+000208b4 		rts
+void rutina_tout0(void){}
+000208b6 <rutina_tout0>	linkw %fp,#0
+000208ba 		unlk %fp
+000208bc 		rts
+void rutina_tout1(void){}
+000208be <rutina_tout1>	linkw %fp,#0
+000208c2 		unlk %fp
+000208c4 		rts
+void rutina_tout2(void){}
+000208c6 <rutina_tout2>	linkw %fp,#0
+000208ca 		unlk %fp
+000208cc 		rts
+void rutina_tout3(void){}
+000208ce <rutina_tout3>	linkw %fp,#0
+000208d2 		unlk %fp
+000208d4 		rts
+000208d6 		rts
+000208d8 <Ld$den>	orl %d7,%d0
+000208da 		movew #3,%d7
+000208de 		moveq #2,%d6
+000208e0 		jmp 00021468 <$_exception_handler>
+000208e6 <Ld$infty>	movel #2146435072,%d0
+000208ec 		moveq #0,%d1
+000208ee 		orl %d7,%d0
+000208f0 		movew #5,%d7
+000208f4 		moveq #2,%d6
+000208f6 		jmp 00021468 <$_exception_handler>
+000208fc <Ld$underflow>	moveq #0,%d0
+000208fe 		movel %d0,%d1
+00020900 		movew #3,%d7
+00020904 		moveq #2,%d6
+00020906 		jmp 00021468 <$_exception_handler>
+0002090c <Ld$inop>	moveq #-1,%d0
+0002090e 		movel %d0,%d1
+00020910 		movew #17,%d7
+00020914 		moveq #2,%d6
+00020916 		jmp 00021468 <$_exception_handler>
+0002091c <Ld$div$0>	movel #2146435072,%d0
+00020922 		moveq #0,%d1
+00020924 		orl %d7,%d0
+00020926 		movew #9,%d7
+0002092a 		moveq #2,%d6
+0002092c 		jmp 00021468 <$_exception_handler>
+00020932 <__subdf3>	bchg #31,%sp@(12)
+00020938 <__adddf3>	linkw %fp,#-24
+0002093c 		moveml %d2-%d7,%sp@
+00020940 		movel %fp@(8),%d0
+00020944 		movel %fp@(12),%d1
+00020948 		movel %fp@(16),%d2
+0002094c 		movel %fp@(20),%d3
+00020950 		movel %d0,%d7
+00020952 		addl %d1,%d1
+00020954 		addxl %d0,%d0
+00020956 		beqw 00020cdc <Ladddf$b>
+0002095a 		movel %d2,%d6
+0002095c 		addl %d3,%d3
+0002095e 		addxl %d2,%d2
+00020960 		beqw 00020ce4 <Ladddf$a>
+00020964 		andil #-2147483648,%d7
+0002096a 		swap %d6
+0002096c 		andil #32768,%d6
+00020972 		orl %d6,%d7
+00020974 		moveal %d7,%a0
+00020976 		movel #2097151,%d6
+0002097c 		movel #2097152,%d7
+00020982 		movel %d0,%d4
+00020984 		andl %d6,%d0
+00020986 		notl %d6
+00020988 		andl %d6,%d4
+0002098a 		beqw 00020cce <Ladddf$a$den>
+0002098e 		cmpl %d6,%d4
+00020990 		beqw 00020d52 <Ladddf$nf>
+00020994 		orl %d7,%d0
+00020996 <Ladddf$1>	swap %d4
+00020998 		lsrl #5,%d4
+0002099a 		movel %d2,%d5
+0002099c 		andl %d6,%d5
+0002099e 		beqw 00020cd4 <Ladddf$b$den>
+000209a2 		cmpl %d6,%d5
+000209a4 		beqw 00020d52 <Ladddf$nf>
+000209a8 		notl %d6
+000209aa 		andl %d6,%d2
+000209ac 		orl %d7,%d2
+000209ae <Ladddf$2>	swap %d5
+000209b0 		lsrl #5,%d5
+000209b2 		movel %a2,%sp@-
+000209b4 		movel %a3,%sp@-
+000209b6 		movel %a4,%sp@-
+000209b8 		moveal %d4,%a2
+000209ba 		moveal %d5,%a3
+000209bc 		moveq #0,%d7
+000209be 		movel %d7,%d6
+000209c0 		movel %d3,%d5
+000209c2 		movel %d2,%d4
+000209c4 		movel %d7,%d3
+000209c6 		movel %d7,%d2
+000209c8 		moveal %d4,%a4
+000209ca 		movel %a2,%d4
+000209cc 		moveal %a4,%a2
+000209ce 		moveal %d5,%a4
+000209d0 		movel %a3,%d5
+000209d2 		moveal %a4,%a3
+000209d4 		cmpl %d4,%d5
+000209d6 		beqw 00020b16 <Ladddf$3>
+000209da 		bhiw 00020a78 <Ladddf$2+0xca>
+000209de 		movew %d4,%d2
+000209e0 		subl %d5,%d2
+000209e2 		moveal %d4,%a4
+000209e4 		movel %a2,%d4
+000209e6 		moveal %a4,%a2
+000209e8 		moveal %d5,%a4
+000209ea 		movel %a3,%d5
+000209ec 		moveal %a4,%a3
+000209ee 		cmpil #55,%d2
+000209f4 		bgew 00020cae <Ladddf$b$small>
+000209f8 		cmpil #32,%d2
+000209fe 		bgew 00020a4a <Ladddf$2+0x9c>
+00020a02 		cmpil #16,%d2
+00020a08 		bgew 00020a5c <Ladddf$2+0xae>
+00020a0c 		braw 00020a3c <Ladddf$2+0x8e>
+00020a10 		lsrl #1,%d7
+00020a12 		btst #0,%d6
+00020a16 		beqw 00020a1e <Ladddf$2+0x70>
+00020a1a 		bset #31,%d7
+00020a1e 		lsrl #1,%d6
+00020a20 		btst #0,%d5
+00020a24 		beqw 00020a2c <Ladddf$2+0x7e>
+00020a28 		bset #31,%d6
+00020a2c 		lsrl #1,%d5
+00020a2e 		btst #0,%d4
+00020a32 		beqw 00020a3a <Ladddf$2+0x8c>
+00020a36 		bset #31,%d5
+00020a3a 		lsrl #1,%d4
+00020a3c 		subql #1,%d2
+00020a3e 		bplw 00020a10 <Ladddf$2+0x62>
+00020a42 		moveq #0,%d2
+00020a44 		movel %d2,%d3
+00020a46 		braw 00020b22 <Ladddf$4>
+00020a4a 		movel %d6,%d7
+00020a4c 		movel %d5,%d6
+00020a4e 		movel %d4,%d5
+00020a50 		moveq #0,%d4
+00020a52 		subil #32,%d2
+00020a58 		braw 00020a02 <Ladddf$2+0x54>
+00020a5c 		movew %d6,%d7
+00020a5e 		swap %d7
+00020a60 		movew %d5,%d6
+00020a62 		swap %d6
+00020a64 		movew %d4,%d5
+00020a66 		swap %d5
+00020a68 		movew #0,%d4
+00020a6c 		swap %d4
+00020a6e 		subil #16,%d2
+00020a74 		braw 00020a3c <Ladddf$2+0x8e>
+00020a78 		movel %d5,%d6
+00020a7a 		movel %d4,%d5
+00020a7c 		movel %d6,%d4
+00020a7e 		subl %d5,%d6
+00020a80 		moveal %d4,%a4
+00020a82 		movel %a2,%d4
+00020a84 		moveal %a4,%a2
+00020a86 		moveal %d5,%a4
+00020a88 		movel %a3,%d5
+00020a8a 		moveal %a4,%a3
+00020a8c 		cmpil #55,%d6
+00020a92 		bgew 00020c8e <Ladddf$a$small>
+00020a96 		cmpil #32,%d6
+00020a9c 		bgew 00020ae8 <Ladddf$2+0x13a>
+00020aa0 		cmpil #16,%d6
+00020aa6 		bgew 00020afa <Ladddf$2+0x14c>
+00020aaa 		braw 00020ada <Ladddf$2+0x12c>
+00020aae 		lsrl #1,%d3
+00020ab0 		btst #0,%d2
+00020ab4 		beqw 00020abc <Ladddf$2+0x10e>
+00020ab8 		bset #31,%d3
+00020abc 		lsrl #1,%d2
+00020abe 		btst #0,%d1
+00020ac2 		beqw 00020aca <Ladddf$2+0x11c>
+00020ac6 		bset #31,%d2
+00020aca 		lsrl #1,%d1
+00020acc 		btst #0,%d0
+00020ad0 		beqw 00020ad8 <Ladddf$2+0x12a>
+00020ad4 		bset #31,%d1
+00020ad8 		lsrl #1,%d0
+00020ada 		subql #1,%d6
+00020adc 		bplw 00020aae <Ladddf$2+0x100>
+00020ae0 		moveq #0,%d7
+00020ae2 		movel %d7,%d6
+00020ae4 		braw 00020b22 <Ladddf$4>
+00020ae8 		movel %d2,%d3
+00020aea 		movel %d1,%d2
+00020aec 		movel %d0,%d1
+00020aee 		moveq #0,%d0
+00020af0 		subil #32,%d6
+00020af6 		braw 00020aa0 <Ladddf$2+0xf2>
+00020afa 		movew %d2,%d3
+00020afc 		swap %d3
+00020afe 		movew %d1,%d2
+00020b00 		swap %d2
+00020b02 		movew %d0,%d1
+00020b04 		swap %d1
+00020b06 		movew #0,%d0
+00020b0a 		swap %d0
+00020b0c 		subil #16,%d6
+00020b12 		braw 00020ada <Ladddf$2+0x12c>
+00020b16 <Ladddf$3>	moveal %d4,%a4
+00020b18 		movel %a2,%d4
+00020b1a 		moveal %a4,%a2
+00020b1c 		moveal %d5,%a4
+00020b1e 		movel %a3,%d5
+00020b20 		moveal %a4,%a3
+00020b22 <Ladddf$4>	moveal %d7,%a4
+00020b24 		movel %a0,%d7
+00020b26 		moveal %a4,%a0
+00020b28 		moveal %d6,%a4
+00020b2a 		movel %a3,%d6
+00020b2c 		moveal %a4,%a3
+00020b2e 		movel %d7,%d6
+00020b30 		movew #0,%d7
+00020b34 		swap %d6
+00020b36 		movew #0,%d6
+00020b3a 		eorl %d7,%d6
+00020b3c 		bmiw 00020be4 <Lsubdf$0>
+00020b40 		moveal %d7,%a4
+00020b42 		movel %a0,%d7
+00020b44 		moveal %a4,%a0
+00020b46 		moveal %d6,%a4
+00020b48 		movel %a3,%d6
+00020b4a 		moveal %a4,%a3
+00020b4c 		addl %d7,%d3
+00020b4e 		addxl %d6,%d2
+00020b50 		addxl %d5,%d1
+00020b52 		addxl %d4,%d0
+00020b54 		movel %a2,%d4
+00020b56 		movel %a0,%d7
+00020b58 		andil #-2147483648,%d7
+00020b5e 		moveal %sp@+,%a4
+00020b60 		moveal %sp@+,%a3
+00020b62 		moveal %sp@+,%a2
+00020b64 		btst #54,%d0
+00020b68 		beqw 00020b9a <Ladddf$4+0x78>
+00020b6c 		lsrl #1,%d3
+00020b6e 		btst #0,%d2
+00020b72 		beqw 00020b7a <Ladddf$4+0x58>
+00020b76 		bset #31,%d3
+00020b7a 		lsrl #1,%d2
+00020b7c 		btst #0,%d1
+00020b80 		beqw 00020b88 <Ladddf$4+0x66>
+00020b84 		bset #31,%d2
+00020b88 		lsrl #1,%d1
+00020b8a 		btst #0,%d0
+00020b8e 		beqw 00020b96 <Ladddf$4+0x74>
+00020b92 		bset #31,%d1
+00020b96 		lsrl #1,%d0
+00020b98 		addql #1,%d4
+00020b9a 		lea 00020bc2 <Ladddf$5>,%a0
+00020ba0 		lea 00030000 <_fpCCR>,%a1
+00020ba6 		clrl %d6
+00020ba8 		movew %a1@(6),%d6
+00020bac 		beqw 000213da <Lround$to$nearest>
+00020bb0 		cmpil #2,%d6
+00020bb6 		bhiw 0002145a <Lround$to$minus>
+00020bba 		bltw 0002145a <Lround$to$minus>
+00020bbe 		braw 0002145a <Lround$to$minus>
+00020bc2 <Ladddf$5>	cmpil #2047,%d4
+00020bc8 		bgew 00020bdc <Ladddf$5+0x1a>
+00020bcc 		bclr #52,%d0
+00020bd0 		lsll #4,%d4
+00020bd2 		swap %d0
+00020bd4 		orl %d4,%d0
+00020bd6 		swap %d0
+00020bd8 		braw 00020d2a <Ladddf$ret>
+00020bdc 		movew #1,%d5
+00020be0 		braw 000208e6 <Ld$infty>
+00020be4 <Lsubdf$0>	moveal %d7,%a4
+00020be6 		movel %a0,%d7
+00020be8 		moveal %a4,%a0
+00020bea 		moveal %d6,%a4
+00020bec 		movel %a3,%d6
+00020bee 		moveal %a4,%a3
+00020bf0 		subl %d7,%d3
+00020bf2 		subxl %d6,%d2
+00020bf4 		subxl %d5,%d1
+00020bf6 		subxl %d4,%d0
+00020bf8 		beqw 00020d24 <Ladddf$ret$1>
+00020bfc 		bplw 00020c10 <Lsubdf$0+0x2c>
+00020c00 		movel %a0,%d7
+00020c02 		bchg #31,%d7
+00020c06 		moveal %d7,%a0
+00020c08 		negl %d3
+00020c0a 		negxl %d2
+00020c0c 		negxl %d1
+00020c0e 		negxl %d0
+00020c10 		movel %a2,%d4
+00020c12 		movel %a0,%d7
+00020c14 		andil #-2147483648,%d7
+00020c1a 		moveal %sp@+,%a4
+00020c1c 		moveal %sp@+,%a3
+00020c1e 		moveal %sp@+,%a2
+00020c20 		btst #54,%d0
+00020c24 		beqw 00020c56 <Lsubdf$0+0x72>
+00020c28 		lsrl #1,%d3
+00020c2a 		btst #0,%d2
+00020c2e 		beqw 00020c36 <Lsubdf$0+0x52>
+00020c32 		bset #31,%d3
+00020c36 		lsrl #1,%d2
+00020c38 		btst #0,%d1
+00020c3c 		beqw 00020c44 <Lsubdf$0+0x60>
+00020c40 		bset #31,%d2
+00020c44 		lsrl #1,%d1
+00020c46 		btst #0,%d0
+00020c4a 		beqw 00020c52 <Lsubdf$0+0x6e>
+00020c4e 		bset #31,%d1
+00020c52 		lsrl #1,%d0
+00020c54 		addql #1,%d4
+00020c56 		lea 00020c7e <Lsubdf$1>,%a0
+00020c5c 		lea 00030000 <_fpCCR>,%a1
+00020c62 		clrl %d6
+00020c64 		movew %a1@(6),%d6
+00020c68 		beqw 000213da <Lround$to$nearest>
+00020c6c 		cmpil #2,%d6
+00020c72 		bhiw 0002145a <Lround$to$minus>
+00020c76 		bltw 0002145a <Lround$to$minus>
+00020c7a 		braw 0002145a <Lround$to$minus>
+00020c7e <Lsubdf$1>	bclr #52,%d0
+00020c82 		lsll #4,%d4
+00020c84 		swap %d0
+00020c86 		orl %d4,%d0
+00020c88 		swap %d0
+00020c8a 		braw 00020d2a <Ladddf$ret>
+00020c8e <Ladddf$a$small>	moveal %sp@+,%a4
+00020c90 		moveal %sp@+,%a3
+00020c92 		moveal %sp@+,%a2
+00020c94 		movel %fp@(16),%d0
+00020c98 		movel %fp@(20),%d1
+00020c9c 		lea 00030000 <_fpCCR>,%a0
+00020ca2 		movew #0,%a0@
+00020ca6 		moveml %sp@,%d2-%d7
+00020caa 		unlk %fp
+00020cac 		rts
+00020cae <Ladddf$b$small>	moveal %sp@+,%a4
+00020cb0 		moveal %sp@+,%a3
+00020cb2 		moveal %sp@+,%a2
+00020cb4 		movel %fp@(8),%d0
+00020cb8 		movel %fp@(12),%d1
+00020cbc 		lea 00030000 <_fpCCR>,%a0
+00020cc2 		movew #0,%a0@
+00020cc6 		moveml %sp@,%d2-%d7
+00020cca 		unlk %fp
+00020ccc 		rts
+00020cce <Ladddf$a$den>	movel %d7,%d4
+00020cd0 		braw 00020996 <Ladddf$1>
+00020cd4 <Ladddf$b$den>	movel %d7,%d5
+00020cd6 		notl %d6
+00020cd8 		braw 000209ae <Ladddf$2>
+00020cdc <Ladddf$b>	movel %d2,%d0
+00020cde 		movel %d3,%d1
+00020ce0 		braw 00020cec <Ladddf$a+0x8>
+00020ce4 <Ladddf$a>	movel %fp@(8),%d0
+00020ce8 		movel %fp@(12),%d1
+00020cec 		movew #1,%d5
+00020cf0 		movel %d0,%d7
+00020cf2 		andil #-2147483648,%d7
+00020cf8 		bclr #31,%d0
+00020cfc 		cmpil #2146435072,%d0
+00020d02 		bgew 00020d14 <Ladddf$a+0x30>
+00020d06 		movel %d0,%d0
+00020d08 		bnew 00020d2a <Ladddf$ret>
+00020d0c 		bclr #31,%d7
+00020d10 		braw 00020d2a <Ladddf$ret>
+00020d14 		andil #1048575,%d0
+00020d1a 		orl %d1,%d0
+00020d1c 		bnew 0002090c <Ld$inop>
+00020d20 		braw 000208e6 <Ld$infty>
+00020d24 <Ladddf$ret$1>	moveal %sp@+,%a4
+00020d26 		moveal %sp@+,%a3
+00020d28 		moveal %sp@+,%a2
+00020d2a <Ladddf$ret>	lea 00030000 <_fpCCR>,%a0
+00020d30 		movew #0,%a0@
+00020d34 		orl %d7,%d0
+00020d36 		moveml %sp@,%d2-%d7
+00020d3a 		unlk %fp
+00020d3c 		rts
+00020d3e <Ladddf$ret$den>	lsrl #1,%d1
+00020d40 		btst #0,%d0
+00020d44 		beqw 00020d4c <Ladddf$ret$den+0xe>
+00020d48 		bset #31,%d1
+00020d4c 		lsrl #1,%d0
+00020d4e 		braw 00020d2a <Ladddf$ret>
+00020d52 <Ladddf$nf>	movew #1,%d5
+00020d56 		movel %fp@(8),%d0
+00020d5a 		movel %fp@(12),%d1
+00020d5e 		movel %fp@(16),%d2
+00020d62 		movel %fp@(20),%d3
+00020d66 		movel #2146435072,%d4
+00020d6c 		movel %d0,%d7
+00020d6e 		movel %d2,%d6
+00020d70 		bclr #31,%d0
+00020d74 		bclr #31,%d2
+00020d78 		cmpl %d4,%d0
+00020d7a 		bhiw 0002090c <Ld$inop>
+00020d7e 		bnew 00020d88 <Ladddf$nf+0x36>
+00020d82 		tstl %d1
+00020d84 		bnew 0002090c <Ld$inop>
+00020d88 		cmpl %d4,%d2
+00020d8a 		bhiw 0002090c <Ld$inop>
+00020d8e 		bnew 00020d98 <Ladddf$nf+0x46>
+00020d92 		tstl %d3
+00020d94 		bnew 0002090c <Ld$inop>
+00020d98 		eorl %d7,%d6
+00020d9a 		bmiw 00020da8 <Ladddf$nf+0x56>
+00020d9e 		andil #-2147483648,%d7
+00020da4 		braw 000208e6 <Ld$infty>
+00020da8 		cmpl %d2,%d0
+00020daa 		bnew 00020db4 <Ladddf$nf+0x62>
+00020dae 		cmpl %d3,%d1
+00020db0 		beqw 0002090c <Ld$inop>
+00020db4 		andil #-2147483648,%d7
+00020dba 		cmpl %d4,%d0
+00020dbc 		beqw 000208e6 <Ld$infty>
+00020dc0 		bchg #31,%d7
+00020dc4 		braw 000208e6 <Ld$infty>
+00020dc8 <__muldf3>	linkw %fp,#-24
+00020dcc 		moveml %d2-%d7,%sp@
+00020dd0 		movel %fp@(8),%d0
+00020dd4 		movel %fp@(12),%d1
+00020dd8 		movel %fp@(16),%d2
+00020ddc 		movel %fp@(20),%d3
+00020de0 		movel %d0,%d7
+00020de2 		eorl %d2,%d7
+00020de4 		andil #-2147483648,%d7
+00020dea 		moveal %d7,%a0
+00020dec 		movel #2146435072,%d7
+00020df2 		movel %d7,%d6
+00020df4 		notl %d6
+00020df6 		bclr #31,%d0
+00020dfa 		movel %d0,%d4
+00020dfc 		orl %d1,%d4
+00020dfe 		beqw 00020f5c <Lmuldf$a$0>
+00020e02 		movel %d0,%d4
+00020e04 		bclr #31,%d2
+00020e08 		movel %d2,%d5
+00020e0a 		orl %d3,%d5
+00020e0c 		beqw 00020f48 <Lmuldf$b$0>
+00020e10 		movel %d2,%d5
+00020e12 		cmpl %d7,%d0
+00020e14 		bhiw 00020f20 <Lmuldf$inop>
+00020e18 		beqw 00020f38 <Lmuldf$a$nf>
+00020e1c 		cmpl %d7,%d2
+00020e1e 		bhiw 00020f20 <Lmuldf$inop>
+00020e22 		beqw 00020f28 <Lmuldf$b$nf>
+00020e26 		andl %d7,%d4
+00020e28 		beqw 00020f84 <Lmuldf$a$den>
+00020e2c 		andl %d6,%d0
+00020e2e 		oril #1048576,%d0
+00020e34 		swap %d4
+00020e36 		lsrl #4,%d4
+00020e38 <Lmuldf$1>	andl %d7,%d5
+00020e3a 		beqw 00020f9a <Lmuldf$b$den>
+00020e3e 		andl %d6,%d2
+00020e40 		oril #1048576,%d2
+00020e46 		swap %d5
+00020e48 		lsrl #4,%d5
+00020e4a <Lmuldf$2>	addl %d5,%d4
+00020e4c 		subil #1023,%d4
+00020e52 		movel %a2,%sp@-
+00020e54 		movel %a3,%sp@-
+00020e56 		movel %a4,%sp@-
+00020e58 		moveal #0,%a2
+00020e5e 		moveal %d4,%a3
+00020e60 		moveq #11,%d7
+00020e62 		lsll %d7,%d2
+00020e64 		movel %d3,%d6
+00020e66 		lsll %d7,%d3
+00020e68 		andil #-2097152,%d6
+00020e6e 		moveq #21,%d7
+00020e70 		lsrl %d7,%d6
+00020e72 		orl %d6,%d2
+00020e74 		movel %d2,%d6
+00020e76 		movel %d3,%d7
+00020e78 		movel %d0,%d4
+00020e7a 		movel %d1,%d5
+00020e7c 		moveq #0,%d3
+00020e7e 		movel %d3,%d2
+00020e80 		movel %d3,%d1
+00020e82 		movel %d3,%d0
+00020e84 		moveal #52,%a1
+00020e8a 		moveal %d7,%a4
+00020e8c 		movel %a1,%d7
+00020e8e 		moveal %a4,%a1
+00020e90 		moveal %d7,%a4
+00020e92 		movel %a1,%d7
+00020e94 		moveal %a4,%a1
+00020e96 		addl %d3,%d3
+00020e98 		addxl %d2,%d2
+00020e9a 		addxl %d1,%d1
+00020e9c 		addxl %d0,%d0
+00020e9e 		addl %d7,%d7
+00020ea0 		addxl %d6,%d6
+00020ea2 		bccw 00020eba <Lmuldf$2+0x70>
+00020ea6 		moveal %d7,%a4
+00020ea8 		movel %a2,%d7
+00020eaa 		moveal %a4,%a2
+00020eac 		addl %d5,%d3
+00020eae 		addxl %d4,%d2
+00020eb0 		addxl %d7,%d1
+00020eb2 		addxl %d7,%d0
+00020eb4 		moveal %d7,%a4
+00020eb6 		movel %a2,%d7
+00020eb8 		moveal %a4,%a2
+00020eba 		moveal %d7,%a4
+00020ebc 		movel %a1,%d7
+00020ebe 		moveal %a4,%a1
+00020ec0 		subql #1,%d7
+00020ec2 		bplw 00020e90 <Lmuldf$2+0x46>
+00020ec6 		movel %a3,%d4
+00020ec8 		moveal %sp@+,%a4
+00020eca 		moveal %sp@+,%a3
+00020ecc 		moveal %sp@+,%a2
+00020ece 		swap %d0
+00020ed0 		swap %d1
+00020ed2 		movew %d1,%d0
+00020ed4 		swap %d2
+00020ed6 		movew %d2,%d1
+00020ed8 		swap %d3
+00020eda 		movew %d3,%d2
+00020edc 		movew #0,%d3
+00020ee0 		moveq #29,%d6
+00020ee2 		lsrl #3,%d3
+00020ee4 		movel %d2,%d7
+00020ee6 		lsll %d6,%d7
+00020ee8 		orl %d7,%d3
+00020eea 		lsrl #3,%d2
+00020eec 		movel %d1,%d7
+00020eee 		lsll %d6,%d7
+00020ef0 		orl %d7,%d2
+00020ef2 		lsrl #3,%d1
+00020ef4 		movel %d0,%d7
+00020ef6 		lsll %d6,%d7
+00020ef8 		orl %d7,%d1
+00020efa 		lsrl #3,%d0
+00020efc 		movel %a0,%d7
+00020efe 		movew #2,%d5
+00020f02 		btst #22,%d0
+00020f06 		beqw 000211da <Lround$exit>
+00020f0a 		lsrl #1,%d1
+00020f0c 		btst #0,%d0
+00020f10 		beqw 00020f18 <Lmuldf$2+0xce>
+00020f14 		bset #31,%d1
+00020f18 		lsrl #1,%d0
+00020f1a 		addql #1,%d4
+00020f1c 		braw 000211da <Lround$exit>
+00020f20 <Lmuldf$inop>	movew #2,%d5
+00020f24 		braw 0002090c <Ld$inop>
+00020f28 <Lmuldf$b$nf>	movew #2,%d5
+00020f2c 		movel %a0,%d7
+00020f2e 		tstl %d3
+00020f30 		bnew 0002090c <Ld$inop>
+00020f34 		braw 000208e6 <Ld$infty>
+00020f38 <Lmuldf$a$nf>	movew #2,%d5
+00020f3c 		movel %a0,%d7
+00020f3e 		tstl %d1
+00020f40 		bnew 0002090c <Ld$inop>
+00020f44 		braw 000208e6 <Ld$infty>
+00020f48 <Lmuldf$b$0>	movew #2,%d5
+00020f4c 		movel %d2,%d7
+00020f4e 		movel %d0,%d2
+00020f50 		movel %d7,%d0
+00020f52 		movel %d3,%d7
+00020f54 		movel %d1,%d3
+00020f56 		movel %d7,%d1
+00020f58 		braw 00020f68 <Lmuldf$a$0+0xc>
+00020f5c <Lmuldf$a$0>	movel %fp@(16),%d2
+00020f60 		movel %fp@(20),%d3
+00020f64 		bclr #31,%d2
+00020f68 		cmpil #2146435072,%d2
+00020f6e 		bgew 0002090c <Ld$inop>
+00020f72 		lea 00030000 <_fpCCR>,%a0
+00020f78 		movew #0,%a0@
+00020f7c 		moveml %sp@,%d2-%d7
+00020f80 		unlk %fp
+00020f82 		rts
+00020f84 <Lmuldf$a$den>	moveq #1,%d4
+00020f86 		andl %d6,%d0
+00020f88 		addl %d1,%d1
+00020f8a 		addxl %d0,%d0
+00020f8c 		subql #1,%d4
+00020f8e 		btst #20,%d0
+00020f92 		bnew 00020e38 <Lmuldf$1>
+00020f96 		braw 00020f88 <Lmuldf$a$den+0x4>
+00020f9a <Lmuldf$b$den>	moveq #1,%d5
+00020f9c 		andl %d6,%d2
+00020f9e 		addl %d3,%d3
+00020fa0 		addxl %d2,%d2
+00020fa2 		subql #1,%d5
+00020fa4 		btst #20,%d2
+00020fa8 		bnew 00020e4a <Lmuldf$2>
+00020fac 		braw 00020f9e <Lmuldf$b$den+0x4>
+00020fb0 <__divdf3>	linkw %fp,#-24
+00020fb4 		moveml %d2-%d7,%sp@
+00020fb8 		movel %fp@(8),%d0
+00020fbc 		movel %fp@(12),%d1
+00020fc0 		movel %fp@(16),%d2
+00020fc4 		movel %fp@(20),%d3
+00020fc8 		movel %d0,%d7
+00020fca 		eorl %d2,%d7
+00020fcc 		andil #-2147483648,%d7
+00020fd2 		moveal %d7,%a0
+00020fd4 		movel #2146435072,%d7
+00020fda 		movel %d7,%d6
+00020fdc 		notl %d6
+00020fde 		bclr #31,%d0
+00020fe2 		movel %d0,%d4
+00020fe4 		orl %d1,%d4
+00020fe6 		beqw 00021132 <Ldivdf$a$0>
+00020fea 		movel %d0,%d4
+00020fec 		bclr #31,%d2
+00020ff0 		movel %d2,%d5
+00020ff2 		orl %d3,%d5
+00020ff4 		beqw 0002116c <Ldivdf$b$0>
+00020ff8 		movel %d2,%d5
+00020ffa 		cmpl %d7,%d0
+00020ffc 		bhiw 0002112a <Ldivdf$inop>
+00021000 		beqw 00021194 <Ldivdf$a$nf>
+00021004 		cmpl %d7,%d2
+00021006 		bhiw 0002112a <Ldivdf$inop>
+0002100a 		beqw 00021186 <Ldivdf$b$nf>
+0002100e 		andl %d7,%d4
+00021010 		beqw 000211ae <Ldivdf$a$den>
+00021014 		andl %d6,%d0
+00021016 		oril #1048576,%d0
+0002101c 		swap %d4
+0002101e 		lsrl #4,%d4
+00021020 <Ldivdf$1>	andl %d7,%d5
+00021022 		beqw 000211c4 <Ldivdf$b$den>
+00021026 		andl %d6,%d2
+00021028 		oril #1048576,%d2
+0002102e 		swap %d5
+00021030 		lsrl #4,%d5
+00021032 <Ldivdf$2>	subl %d5,%d4
+00021034 		addil #1022,%d4
+0002103a 		moveq #0,%d6
+0002103c 		movel %d6,%d7
+0002103e 		moveal #0,%a1
+00021044 		moveq #22,%d5
+00021046 		cmpl %d0,%d2
+00021048 		bhiw 00021056 <Ldivdf$2+0x24>
+0002104c 		beqw 00021064 <Ldivdf$2+0x32>
+00021050 		subl %d3,%d1
+00021052 		subxl %d2,%d0
+00021054 		bset %d5,%d6
+00021056 		addl %d1,%d1
+00021058 		addxl %d0,%d0
+0002105a 		subql #1,%d5
+0002105c 		bplw 00021046 <Ldivdf$2+0x14>
+00021060 		braw 0002106e <Ldivdf$2+0x3c>
+00021064 		cmpl %d1,%d3
+00021066 		bhiw 00021056 <Ldivdf$2+0x24>
+0002106a 		braw 00021050 <Ldivdf$2+0x1e>
+0002106e 		moveq #31,%d5
+00021070 		cmpl %d0,%d2
+00021072 		bhiw 00021080 <Ldivdf$2+0x4e>
+00021076 		beqw 0002108e <Ldivdf$2+0x5c>
+0002107a 		subl %d3,%d1
+0002107c 		subxl %d2,%d0
+0002107e 		bset %d5,%d7
+00021080 		addl %d1,%d1
+00021082 		addxl %d0,%d0
+00021084 		subql #1,%d5
+00021086 		bplw 00021070 <Ldivdf$2+0x3e>
+0002108a 		braw 00021098 <Ldivdf$2+0x66>
+0002108e 		cmpl %d1,%d3
+00021090 		bhiw 00021080 <Ldivdf$2+0x4e>
+00021094 		braw 0002107a <Ldivdf$2+0x48>
+00021098 		moveq #53,%d5
+0002109a 		cmpl %d2,%d0
+0002109c 		bhiw 000210bc <Ldivdf$2+0x8a>
+000210a0 		beqw 000210b6 <Ldivdf$2+0x84>
+000210a4 		addl %d1,%d1
+000210a6 		addxl %d0,%d0
+000210a8 		subql #1,%d5
+000210aa 		bplw 0002109a <Ldivdf$2+0x68>
+000210ae 		moveq #0,%d2
+000210b0 		movel %d2,%d3
+000210b2 		braw 000210e4 <Ldivdf$2+0xb2>
+000210b6 		cmpl %d1,%d3
+000210b8 		bhiw 000210a4 <Ldivdf$2+0x72>
+000210bc 		moveq #0,%d2
+000210be 		movel %d2,%d3
+000210c0 		subil #53,%d5
+000210c6 		addil #63,%d5
+000210cc 		cmpil #31,%d5
+000210d2 		bhiw 000210e2 <Ldivdf$2+0xb0>
+000210d6 		bset %d5,%d3
+000210d8 		braw 000210e4 <Ldivdf$2+0xb2>
+000210dc 		subil #32,%d5
+000210e2 		bset %d5,%d2
+000210e4 		movel %d6,%d0
+000210e6 		movel %d7,%d1
+000210e8 		moveq #0,%d3
+000210ea 		btst #22,%d0
+000210ee 		beqw 00021120 <Ldivdf$2+0xee>
+000210f2 		lsrl #1,%d3
+000210f4 		btst #0,%d2
+000210f8 		beqw 00021100 <Ldivdf$2+0xce>
+000210fc 		bset #31,%d3
+00021100 		lsrl #1,%d2
+00021102 		btst #0,%d1
+00021106 		beqw 0002110e <Ldivdf$2+0xdc>
+0002110a 		bset #31,%d2
+0002110e 		lsrl #1,%d1
+00021110 		btst #0,%d0
+00021114 		beqw 0002111c <Ldivdf$2+0xea>
+00021118 		bset #31,%d1
+0002111c 		lsrl #1,%d0
+0002111e 		addql #1,%d4
+00021120 		movel %a0,%d7
+00021122 		movew #3,%d5
+00021126 		braw 000211da <Lround$exit>
+0002112a <Ldivdf$inop>	movew #3,%d5
+0002112e 		braw 0002090c <Ld$inop>
+00021132 <Ldivdf$a$0>	movew #3,%d5
+00021136 		bclr #31,%d2
+0002113a 		movel %d2,%d4
+0002113c 		orl %d3,%d4
+0002113e 		beqw 0002090c <Ld$inop>
+00021142 		cmpil #2146435072,%d2
+00021148 		bhiw 0002090c <Ld$inop>
+0002114c 		bltw 00021156 <Ldivdf$a$0+0x24>
+00021150 		tstl %d3
+00021152 		bnew 0002090c <Ld$inop>
+00021156 		moveq #0,%d0
+00021158 		movel %d0,%d1
+0002115a 		lea 00030000 <_fpCCR>,%a0
+00021160 		movew #0,%a0@
+00021164 		moveml %sp@,%d2-%d7
+00021168 		unlk %fp
+0002116a 		rts
+0002116c <Ldivdf$b$0>	movew #3,%d5
+00021170 		movel %a0,%d7
+00021172 		cmpil #2146435072,%d0
+00021178 		bhiw 0002090c <Ld$inop>
+0002117c 		tstl %d1
+0002117e 		bnew 0002090c <Ld$inop>
+00021182 		braw 0002091c <Ld$div$0>
+00021186 <Ldivdf$b$nf>	movew #3,%d5
+0002118a 		tstl %d3
+0002118c 		bnew 0002090c <Ld$inop>
+00021190 		braw 000208fc <Ld$underflow>
+00021194 <Ldivdf$a$nf>	movew #3,%d5
+00021198 		tstl %d1
+0002119a 		bnew 0002090c <Ld$inop>
+0002119e 		cmpl %d7,%d2
+000211a0 		bgew 0002090c <Ld$inop>
+000211a4 		tstl %d3
+000211a6 		bnew 0002090c <Ld$inop>
+000211aa 		braw 000208e6 <Ld$infty>
+000211ae <Ldivdf$a$den>	moveq #1,%d4
+000211b0 		andl %d6,%d0
+000211b2 		addl %d1,%d1
+000211b4 		addxl %d0,%d0
+000211b6 		subql #1,%d4
+000211b8 		btst #20,%d0
+000211bc 		bnew 00021020 <Ldivdf$1>
+000211c0 		braw 000211b2 <Ldivdf$a$den+0x4>
+000211c4 <Ldivdf$b$den>	moveq #1,%d5
+000211c6 		andl %d6,%d2
+000211c8 		addl %d3,%d3
+000211ca 		addxl %d2,%d2
+000211cc 		subql #1,%d5
+000211ce 		btst #20,%d2
+000211d2 		bnew 00021032 <Ldivdf$2>
+000211d6 		braw 000211c8 <Ldivdf$b$den+0x4>
+000211da <Lround$exit>	cmpil #-54,%d4
+000211e0 		bltw 000208fc <Ld$underflow>
+000211e4 		moveal %d7,%a0
+000211e6 		moveq #0,%d6
+000211e8 		movel %d6,%d7
+000211ea 		cmpil #1,%d4
+000211f0 		bgew 00021250 <Lround$exit+0x76>
+000211f4 		addql #1,%d4
+000211f6 		lsrl #1,%d7
+000211f8 		btst #0,%d6
+000211fc 		beqw 00021204 <Lround$exit+0x2a>
+00021200 		bset #31,%d7
+00021204 		lsrl #1,%d6
+00021206 		btst #0,%d3
+0002120a 		beqw 00021212 <Lround$exit+0x38>
+0002120e 		bset #31,%d6
+00021212 		lsrl #1,%d3
+00021214 		btst #0,%d2
+00021218 		beqw 00021220 <Lround$exit+0x46>
+0002121c 		bset #31,%d3
+00021220 		lsrl #1,%d2
+00021222 		btst #0,%d1
+00021226 		beqw 0002122e <Lround$exit+0x54>
+0002122a 		bset #31,%d2
+0002122e 		lsrl #1,%d1
+00021230 		btst #0,%d0
+00021234 		beqw 0002123c <Lround$exit+0x62>
+00021238 		bset #31,%d1
+0002123c 		lsrl #1,%d0
+0002123e 		cmpil #1,%d4
+00021244 		beqw 00021250 <Lround$exit+0x76>
+00021248 		braw 000211f4 <Lround$exit+0x1a>
+0002124c 		braw 000208fc <Ld$underflow>
+00021250 		orl %d6,%d2
+00021252 		orl %d7,%d3
+00021254 		movel %a0,%d7
+00021256 		lea 0002127e <Lround$0>,%a0
+0002125c 		lea 00030000 <_fpCCR>,%a1
+00021262 		clrl %d6
+00021264 		movew %a1@(6),%d6
+00021268 		beqw 000213da <Lround$to$nearest>
+0002126c 		cmpil #2,%d6
+00021272 		bhiw 0002145a <Lround$to$minus>
+00021276 		bltw 0002145a <Lround$to$minus>
+0002127a 		braw 0002145a <Lround$to$minus>
+0002127e <Lround$0>	cmpil #2047,%d4
+00021284 		bgew 000208e6 <Ld$infty>
+00021288 		movew %d4,%d4
+0002128a 		beqw 000208d8 <Ld$den>
+0002128e 		lsll #4,%d4
+00021290 		bclr #20,%d0
+00021294 		swap %d0
+00021296 		orl %d4,%d0
+00021298 		swap %d0
+0002129a 		orl %d7,%d0
+0002129c 		lea 00030000 <_fpCCR>,%a0
+000212a2 		movew #0,%a0@
+000212a6 		moveml %sp@,%d2-%d7
+000212aa 		unlk %fp
+000212ac 		rts
+000212ae <__negdf2>	linkw %fp,#-24
+000212b2 		moveml %d2-%d7,%sp@
+000212b6 		movew #4,%d5
+000212ba 		movel %fp@(8),%d0
+000212be 		movel %fp@(12),%d1
+000212c2 		bchg #31,%d0
+000212c6 		movel %d0,%d2
+000212c8 		bclr #31,%d2
+000212cc 		movel %d2,%d4
+000212ce 		orl %d1,%d4
+000212d0 		beqw 00021306 <__negdf2+0x58>
+000212d4 		cmpil #2146435072,%d2
+000212da 		bltw 000212f4 <__negdf2+0x46>
+000212de 		bhiw 0002090c <Ld$inop>
+000212e2 		tstl %d1
+000212e4 		bnew 0002090c <Ld$inop>
+000212e8 		movel %d0,%d7
+000212ea 		andil #-2147483648,%d7
+000212f0 		braw 000208e6 <Ld$infty>
+000212f4 		lea 00030000 <_fpCCR>,%a0
+000212fa 		movew #0,%a0@
+000212fe 		moveml %sp@,%d2-%d7
+00021302 		unlk %fp
+00021304 		rts
+00021306 		bclr #31,%d0
+0002130a 		braw 000212f4 <__negdf2+0x46>
+0002130e <__cmpdf2>	linkw %fp,#-24
+00021312 		moveml %d2-%d7,%sp@
+00021316 		movew #5,%d5
+0002131a 		movel %fp@(8),%d0
+0002131e 		movel %fp@(12),%d1
+00021322 		movel %fp@(16),%d2
+00021326 		movel %fp@(20),%d3
+0002132a 		movel %d0,%d6
+0002132c 		bclr #31,%d0
+00021330 		movel %d2,%d7
+00021332 		bclr #31,%d2
+00021336 		cmpil #2147418112,%d0
+0002133c 		bhiw 0002090c <Ld$inop>
+00021340 		beqw 000213c6 <Lcmpdf$a$nf>
+00021344 		movel %d0,%d4
+00021346 		orl %d1,%d4
+00021348 		beqw 000213b6 <Lcmpdf$a$0>
+0002134c <Lcmpdf$0>	cmpil #2147418112,%d2
+00021352 		bhiw 0002090c <Ld$inop>
+00021356 		beqw 000213d0 <Lcmpdf$b$nf>
+0002135a 		movel %d2,%d4
+0002135c 		orl %d3,%d4
+0002135e 		beqw 000213be <Lcmpdf$b$0>
+00021362 <Lcmpdf$1>	eorl %d6,%d7
+00021364 		bplw 00021372 <Lcmpdf$1+0x10>
+00021368 		tstl %d6
+0002136a 		bplw 000213a2 <Lcmpdf$a$gt$b>
+0002136e 		bmiw 000213ac <Lcmpdf$b$gt$a>
+00021372 		tstl %d6
+00021374 		bplw 00021384 <Lcmpdf$1+0x22>
+00021378 		movel %d0,%d7
+0002137a 		movel %d2,%d0
+0002137c 		movel %d7,%d2
+0002137e 		movel %d1,%d7
+00021380 		movel %d3,%d1
+00021382 		movel %d7,%d3
+00021384 		cmpl %d0,%d2
+00021386 		bhiw 000213ac <Lcmpdf$b$gt$a>
+0002138a 		bnew 000213a2 <Lcmpdf$a$gt$b>
+0002138e 		cmpl %d1,%d3
+00021390 		bhiw 000213ac <Lcmpdf$b$gt$a>
+00021394 		bnew 000213a2 <Lcmpdf$a$gt$b>
+00021398 		moveq #0,%d0
+0002139a 		moveml %sp@,%d2-%d7
+0002139e 		unlk %fp
+000213a0 		rts
+000213a2 <Lcmpdf$a$gt$b>	moveq #1,%d0
+000213a4 		moveml %sp@,%d2-%d7
+000213a8 		unlk %fp
+000213aa 		rts
+000213ac <Lcmpdf$b$gt$a>	moveq #-1,%d0
+000213ae 		moveml %sp@,%d2-%d7
+000213b2 		unlk %fp
+000213b4 		rts
+000213b6 <Lcmpdf$a$0>	bclr #31,%d6
+000213ba 		braw 0002134c <Lcmpdf$0>
+000213be <Lcmpdf$b$0>	bclr #31,%d7
+000213c2 		braw 00021362 <Lcmpdf$1>
+000213c6 <Lcmpdf$a$nf>	tstl %d1
+000213c8 		bnew 0002090c <Ld$inop>
+000213cc 		braw 0002134c <Lcmpdf$0>
+000213d0 <Lcmpdf$b$nf>	tstl %d3
+000213d2 		bnew 0002090c <Ld$inop>
+000213d6 		braw 00021362 <Lcmpdf$1>
+000213da <Lround$to$nearest>	btst #21,%d0
+000213de 		bnew 000213fa <Lround$to$nearest+0x20>
+000213e2 		cmpil #1,%d4
+000213e8 		beqw 000213fa <Lround$to$nearest+0x20>
+000213ec 		addl %d3,%d3
+000213ee 		addxl %d2,%d2
+000213f0 		addxl %d1,%d1
+000213f2 		addxl %d0,%d0
+000213f4 		subql #1,%d4
+000213f6 		bplw 000213da <Lround$to$nearest>
+000213fa 		btst #0,%d1
+000213fe 		beqw 00021422 <Lround$to$nearest+0x48>
+00021402 		orl %d2,%d3
+00021404 		bnew 0002141a <Lround$to$nearest+0x40>
+00021408 		movel %d1,%d3
+0002140a 		andil #2,%d3
+00021410 		moveq #0,%d2
+00021412 		addl %d3,%d1
+00021414 		addxl %d2,%d0
+00021416 		braw 00021422 <Lround$to$nearest+0x48>
+0002141a 		moveq #1,%d3
+0002141c 		moveq #0,%d2
+0002141e 		addl %d3,%d1
+00021420 		addxl %d2,%d0
+00021422 		lsrl #1,%d1
+00021424 		btst #0,%d0
+00021428 		beqw 00021430 <Lround$to$nearest+0x56>
+0002142c 		bset #31,%d1
+00021430 		lsrl #1,%d0
+00021432 		btst #21,%d0
+00021436 		beqw 0002144c <Lround$to$nearest+0x72>
+0002143a 		lsrl #1,%d1
+0002143c 		btst #0,%d0
+00021440 		beqw 00021448 <Lround$to$nearest+0x6e>
+00021444 		bset #31,%d1
+00021448 		lsrl #1,%d0
+0002144a 		addql #1,%d4
+0002144c 		btst #20,%d0
+00021450 		beqw 00021456 <Lround$to$nearest+0x7c>
+00021454 		jmp %a0@
+00021456 		moveq #0,%d4
+00021458 		jmp %a0@
+0002145a <Lround$to$minus>	jmp %a0@
+0002145c <__clear_sticky_bit>	lea 00030000 <_fpCCR>,%a0
+00021462 		clrw %a0@(4)
+00021466 		rts
+00021468 <$_exception_handler>	lea 00030000 <_fpCCR>,%a0
+0002146e 		movew %d7,%a0@(0)
+00021472 		movew %a0@(4),%d4
+00021476 		orl %d7,%d4
+00021478 		movew %d4,%a0@(4)
+0002147c 		movew %d6,%a0@(8)
+00021480 		movew %d5,%a0@(10)
+00021484 		cmpil #1,%d6
+0002148a 		beqw 000214aa <$_exception_handler+0x42>
+0002148e 		movel %fp@(8),%a0@(12)
+00021494 		movel %fp@(12),%a0@(16)
+0002149a 		movel %fp@(16),%a0@(20)
+000214a0 		movel %fp@(20),%a0@(24)
+000214a6 		braw 000214b6 <$_exception_handler+0x4e>
+000214aa 		movel %fp@(8),%a0@(12)
+000214b0 		movel %fp@(12),%a0@(20)
+000214b6 		clrl %d6
+000214b8 		movew %a0@(2),%d6
+000214bc 		andl %d6,%d7
+000214be 		beqw 000214ca <$_exception_handler+0x62>
+000214c2 		pea 00030000 <_fpCCR>
+000214c8 		trap #15
+000214ca 		moveml %sp@,%d2-%d7
+000214ce 		unlk %fp
+000214d0 		rts
+000214d2 		rts
+000214d4 <__floatsidf>	linkw %fp,#0
+000214d8 		lea %sp@(-12),%sp
+000214dc 		moveml %d2-%d4,%sp@
+000214e0 		movel %fp@(8),%d3
+000214e4 		subal %a0,%a0
+000214e6 		movel #1053,%d0
+000214ec 		tstl %d3
+000214ee 		bnes 000214f6 <__floatsidf+0x22>
+000214f0 		clrl %d2
+000214f2 		clrl %d1
+000214f4 		bras 0002154a <__floatsidf+0x76>
+000214f6 		tstl %d3
+000214f8 		bges 00021512 <__floatsidf+0x3e>
+000214fa 		moveal #-2147483648,%a0
+00021500 		negl %d3
+00021502 		bpls 00021512 <__floatsidf+0x3e>
+00021504 		movel #-1042284544,%d1
+0002150a 		clrl %d2
+0002150c 		bras 0002154a <__floatsidf+0x76>
+0002150e 		lsll #4,%d3
+00021510 		subql #4,%d0
+00021512 		cmpil #16777215,%d3
+00021518 		bles 0002150e <__floatsidf+0x3a>
+0002151a 		cmpil #1073741823,%d3
+00021520 		bgts 0002152e <__floatsidf+0x5a>
+00021522 		addl %d3,%d3
+00021524 		subql #1,%d0
+00021526 		cmpil #1073741823,%d3
+0002152c 		bles 00021522 <__floatsidf+0x4e>
+0002152e 		movel %a0,%d1
+00021530 		moveq #20,%d4
+00021532 		lsll %d4,%d0
+00021534 		orl %d0,%d1
+00021536 		movel %d3,%d0
+00021538 		moveq #10,%d4
+0002153a 		asrl %d4,%d0
+0002153c 		andil #-1048577,%d0
+00021542 		orl %d0,%d1
+00021544 		movel %d3,%d2
+00021546 		moveq #22,%d0
+00021548 		lsll %d0,%d2
+0002154a 		movel %d1,%d0
+0002154c 		movel %d2,%d1
+0002154e 		moveml %sp@,%d2-%d4
+00021552 		lea %sp@(12),%sp
+00021556 		unlk %fp
+00021558 		rts
+0002155a <__floatsisf>	linkw %fp,#0
+0002155e 		movel %fp@(8),%sp@-
+00021562 		jsr %pc@(000214d4 <__floatsidf>)
+00021566 		movel %d1,%sp@-
+00021568 		movel %d0,%sp@-
+0002156a 		jsr 000215ce <__truncdfsf2>
+00021570 		unlk %fp
+00021572 		rts
+00021574 <__extendsfdf2>	linkw %fp,#0
+00021578 		lea %sp@(-12),%sp
+0002157c 		moveml %d2-%d4,%sp@
+00021580 		movel %fp@(8),%d1
+00021584 		beqs 000215ba <__extendsfdf2+0x46>
+00021586 		movel %d1,%d2
+00021588 		andil #-2147483648,%d2
+0002158e 		movel %d1,%d0
+00021590 		moveq #23,%d4
+00021592 		asrl %d4,%d0
+00021594 		andil #255,%d0
+0002159a 		addil #896,%d0
+000215a0 		moveq #20,%d4
+000215a2 		lsll %d4,%d0
+000215a4 		orl %d0,%d2
+000215a6 		andil #8388607,%d1
+000215ac 		movel %d1,%d0
+000215ae 		lsrl #3,%d0
+000215b0 		orl %d0,%d2
+000215b2 		movel %d1,%d3
+000215b4 		moveq #29,%d0
+000215b6 		lsll %d0,%d3
+000215b8 		bras 000215be <__extendsfdf2+0x4a>
+000215ba 		clrl %d3
+000215bc 		clrl %d2
+000215be 		movel %d2,%d0
+000215c0 		movel %d3,%d1
+000215c2 		moveml %sp@,%d2-%d4
+000215c6 		lea %sp@(12),%sp
+000215ca 		unlk %fp
+000215cc 		rts
+000215ce <__truncdfsf2>	linkw %fp,#0
+000215d2 		lea %sp@(-16),%sp
+000215d6 		moveml %d2-%d5,%sp@
+000215da 		movel %fp@(8),%d2
+000215de 		movel %fp@(12),%d3
+000215e2 		tstl %d2
+000215e4 		bnes 000215ee <__truncdfsf2+0x20>
+000215e6 		tstl %d3
+000215e8 		bnes 000215ee <__truncdfsf2+0x20>
+000215ea 		moveq #0,%d0
+000215ec 		bras 00021642 <__truncdfsf2+0x74>
+000215ee 		movel %d2,%d0
+000215f0 		moveq #20,%d1
+000215f2 		asrl %d1,%d0
+000215f4 		andil #2047,%d0
+000215fa 		movel %d0,%d4
+000215fc 		addil #-896,%d4
+00021602 		movel %d2,%d1
+00021604 		andil #1048575,%d1
+0002160a 		oril #1048576,%d1
+00021610 		moveq #10,%d5
+00021612 		lsll %d5,%d1
+00021614 		movel %d3,%d0
+00021616 		moveq #22,%d5
+00021618 		lsrl %d5,%d0
+0002161a 		orl %d0,%d1
+0002161c 		lsrl #6,%d1
+0002161e 		addql #1,%d1
+00021620 		asrl #1,%d1
+00021622 		btst #24,%d1
+00021626 		beqs 0002162c <__truncdfsf2+0x5e>
+00021628 		asrl #1,%d1
+0002162a 		addql #1,%d4
+0002162c 		andil #-8388609,%d1
+00021632 		movel %d2,%d0
+00021634 		andil #-2147483648,%d0
+0002163a 		moveq #23,%d2
+0002163c 		lsll %d2,%d4
+0002163e 		orl %d4,%d0
+00021640 		orl %d1,%d0
+00021642 		moveml %sp@,%d2-%d5
+00021646 		lea %sp@(16),%sp
+0002164a 		unlk %fp
+0002164c 		rts
+0002164e <__fixdfsi>	linkw %fp,#0
+00021652 		lea %sp@(-16),%sp
+00021656 		moveml %d2-%d5,%sp@
+0002165a 		movel %fp@(8),%d1
+0002165e 		movel %fp@(12),%d2
+00021662 		tstl %d1
+00021664 		bnes 0002166c <__fixdfsi+0x1e>
+00021666 		clrl %d0
+00021668 		tstl %d2
+0002166a 		beqs 000216c6 <__fixdfsi+0x78>
+0002166c 		movel %d1,%d0
+0002166e 		moveq #20,%d3
+00021670 		asrl %d3,%d0
+00021672 		andil #2047,%d0
+00021678 		movel %d0,%d4
+0002167a 		addil #-1053,%d4
+00021680 		movel %d1,%d3
+00021682 		andil #1048575,%d3
+00021688 		oril #1048576,%d3
+0002168e 		moveq #10,%d5
+00021690 		lsll %d5,%d3
+00021692 		movel %d2,%d0
+00021694 		moveq #22,%d5
+00021696 		lsrl %d5,%d0
+00021698 		orl %d0,%d3
+0002169a 		tstl %d4
+0002169c 		bles 000216ac <__fixdfsi+0x5e>
+0002169e 		movel #2147483647,%d0
+000216a4 		tstl %d1
+000216a6 		bges 000216c6 <__fixdfsi+0x78>
+000216a8 		addql #1,%d0
+000216aa 		bras 000216c6 <__fixdfsi+0x78>
+000216ac 		moveq #-32,%d0
+000216ae 		cmpl %d4,%d0
+000216b0 		blts 000216b6 <__fixdfsi+0x68>
+000216b2 		clrl %d0
+000216b4 		bras 000216c6 <__fixdfsi+0x78>
+000216b6 		tstl %d4
+000216b8 		bges 000216be <__fixdfsi+0x70>
+000216ba 		negl %d4
+000216bc 		asrl %d4,%d3
+000216be 		movel %d3,%d0
+000216c0 		tstl %d1
+000216c2 		bges 000216c6 <__fixdfsi+0x78>
+000216c4 		negl %d0
+000216c6 		moveml %sp@,%d2-%d5
+000216ca 		lea %sp@(16),%sp
+000216ce 		unlk %fp
+000216d0 		rts
+000216d2 <__fixsfsi>	linkw %fp,#0
+000216d6 		movel %fp@(8),%d0
+000216da 		movel %d0,%sp@-
+000216dc 		jsr %pc@(00021574 <__extendsfdf2>)
+000216e0 		addql #4,%sp
+000216e2 		movel %d1,%sp@-
+000216e4 		movel %d0,%sp@-
+000216e6 		jsr %pc@(0002164e <__fixdfsi>)
+000216ea 		unlk %fp
+000216ec 		rts
+ 
+//------------------------------------------// 
+//            TABLA DE SIMBOLOS             // 
+//------------------------------------------// 
+00030000 d __exception_bits
+00030000 D _fpCCR
+00030002 d __trap_enable_bits
+00030004 d __sticky_bits
+00030006 d __rounding_mode
+00030008 d __format
+0003000a d __last_operation
+0003000c d __operand1
+00030014 d __operand2
+0003001c 00000002 B puertoS

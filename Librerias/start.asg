@@ -1,0 +1,108 @@
+#NO_APP
+gcc2_compiled.:
+___gnu_compiled_c:
+.text
+	.even
+.globl __start
+__start:
+#APP
+   movea.l #0x30000,%sp
+   move.w  #0x2000,%sr
+	jbsr __init	 
+   #move.w  #0x2000,%sr
+bucle:
+   jbsr bucleMain
+   jra bucle
+#NO_APP
+	rts
+
+
+
+.globl _prep_TOUT0
+_prep_TOUT0:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_tout0
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_TOUT1
+_prep_TOUT1:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_tout1
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_TOUT2
+_prep_TOUT2:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_tout2
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_TOUT3
+_prep_TOUT3:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_tout3
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_INT1
+_prep_INT1:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_int1
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_INT2
+_prep_INT2:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_int2
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_INT3
+_prep_INT3:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_int3
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+
+.globl _prep_INT4
+_prep_INT4:
+#APP
+        adda.l #-60, %a7
+        movem.l %d0-%a6, (%a7)
+   jbsr rutina_int4
+        movem.l (%a7), %d0-%a6
+        adda.l #60,%a7
+#NO_APP
+	rte
+	
