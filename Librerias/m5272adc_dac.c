@@ -151,6 +151,12 @@ int ADC_leeRxRAM(){
   datoLeido = dato2 >> 3;	// Reconstruye el dato leído
   datoLeido += dato1 << 5;	// a partir de dato1 y dato2
 
+  //AÑADIDO POR ALUMNOS
+  if (datoLeido>2047)
+  {
+    datoLeido |= 0xFFFFF000;
+  }
+
   // datoLeido = (datoLeido << 1); // Para igualar la escala con el DAC (Vmax(DAC)=2.5V;Vmax(ADC)=5.00V)
  
   return datoLeido;
