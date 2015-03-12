@@ -3,11 +3,12 @@
 //TODO include
 
 #ifndef DATOS
+
 #define V_BASE 0x40   //Direccion inicio (base) de vector interrupciones
 #define DIR_VTMR0 4*(V_BASE+5)	//Direccion del vector de timer0
 #define FREC_INT 4000	//Frecuencia de interrupcion periodica
-#define PRESCALADO 2
-#define CNT_INIT1 MCF_CLK/(FREC_INT*PRESCALADO*16) //TRR, valor de carga en el temporizador
+#define PREESCALADO 2
+#define CNT_INIT1 MCF_CLK/(FREC_INT*PREESCALADO*16) //TRR, valor de carga en el temporizador
 
 #if CNT_INIT1>0xFFFF
 #error PRESCALADO demasiado pequeño para la frecuencia pedida(CNT_INIT1>0xFFFF)
@@ -17,3 +18,9 @@
 
 
 #endif
+
+
+
+void __attribute__ ((interrupt_handler)) interr_periodica(void){
+	calculaModuloDFT(ADC_dato());
+}
