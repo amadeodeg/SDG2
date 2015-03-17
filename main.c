@@ -8,8 +8,28 @@ void visualizacion_ociloscopio(void){
 	}
 }
 
+void configMinima(){
+	
+}
+
 int main(int argc, char const *argv[])
 {
+	configMinima();
+
+	char teclaModo = leeTecladoMatricial();
+	switch(teclaModo){
+		
+		case MODO_1:
+		configModo1();
+		startModo1();
+		break;
+
+		default:
+		break;
+	}
+
+
+
 	visualizacion_ociloscopio();
 	return 0;
 }
