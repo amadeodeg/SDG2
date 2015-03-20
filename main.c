@@ -1,29 +1,31 @@
-#include "./lib/m5272ADC_DAC.h"
-
-void startModo1(void){
-	while(1){
-		int i;
-		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-			DAC_dato(mod2esc(modFrecTot));
-			sleep(T_PANTALLA/NUM_FREC_MUESTREADAS)
-		}
-	}
-}
+#include "./lib/m5272adc_dac.h"
+#include "./lib/teclado_matricial.h"
+#define MODO_1 1
+// void startModo1(void){
+// 	while(1){
+// 		int i;
+// 		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
+// 			DAC_dato(mod2esc(modFrecTot));
+// 			nanosleep(T_PANTALLA/NUM_FREC_MUESTREADAS)
+// 		}
+// 	}
+// }
 
 void configMinima(){
-
+	DAC_ADC_init();
 }
 
 int main(int argc, char const *argv[])
 {
 	configMinima();
 
-	char teclaModo = leeTecladoMatricial();
+	int teclaModo = get_teclado();
 	switch(teclaModo){
 		
 		case MODO_1:
-		configModo1();
-		startModo1();
+		//configModo1();
+		//startModo1();
+
 		break;
 
 		default:
@@ -32,6 +34,6 @@ int main(int argc, char const *argv[])
 
 
 
-	visualizacion_ociloscopio();
+	//visualizacion_ociloscopio();
 	return 0;
 }
