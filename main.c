@@ -1,4 +1,6 @@
-void visualizacion_ociloscopio(void){
+#include "./lib/m5272ADC_DAC.h"
+
+void startModo1(void){
 	while(1){
 		int i;
 		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
@@ -9,7 +11,7 @@ void visualizacion_ociloscopio(void){
 }
 
 void configMinima(){
-	
+
 }
 
 int main(int argc, char const *argv[])
