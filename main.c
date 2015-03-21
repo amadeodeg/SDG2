@@ -15,6 +15,7 @@ void configMinima(){
 	DAC_ADC_init();
 }
 
+
 int main(int argc, char const *argv[])
 {
 	configMinima();

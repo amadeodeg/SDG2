@@ -2,7 +2,6 @@
 
 #ifndef SYMBOL
 #define NUM_MUESTRAS_PERIODO_10HZ 400
-#define NUM_MUESTRAS_CADA_SENO
 #define SIZE(a) (sizeof(a)/sizeof(*a))
 #define NUM_FREC_MUESTREADAS 20
 #define NUM_MUESTRAS_CALCULO 80
@@ -33,7 +32,7 @@ int calculaCoseno(int frecuencia, int muestra){
 }
 
 void calculaModuloDFT(int muestraADC){
-	static numMuestrasLeidas=0;
+	static int numMuestrasLeidas=0;
 	static int modFrecCos[NUM_FREC_MUESTREADAS];
 	static int modFrecSen[NUM_FREC_MUESTREADAS];
 	
@@ -47,8 +46,8 @@ void calculaModuloDFT(int muestraADC){
 	numMuestrasLeidas++;
 
 	if (muestraADC>=NUM_MUESTRAS_CALCULO){
-		int i=0;
-		for(i;i<NUM_FREC_MUESTREADAS;i++){
+		int i;
+		for(i=0;i<NUM_FREC_MUESTREADAS;i++){
 			modFrecCos[i]=modFrecCos[i]/1024;
 			modFrecSen[i]=modFrecSen[i]/1024;
 			modFrecTot[i]=modFrecCos[i]*modFrecCos[i]+modFrecSen[i]*modFrecSen[i];
@@ -81,10 +80,10 @@ int mod2esc(int *modulo){
 
 
 
-int main(int argc, char const *argv[])
+/*int main(int argc, char const *argv[])
 {
 	int a = calculaCoseno(100,10);
 	printf("%d\n", a);
 	return 0;
-}
+}*/
 
