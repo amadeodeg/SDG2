@@ -1,5 +1,5 @@
-#include "./lib/m5272adc_dac.h"
-#include "./lib/teclado_matricial.h"
+#include "./lib/m5272adc_dac_sim.h"
+#include "./lib/teclado_matricial_sim.h"
 #define MODO_1 1
 // void startModo1(void){
 // 	while(1){
@@ -18,9 +18,11 @@ void configMinima(){
 
 int main(int argc, char const *argv[])
 {
+	int teclaModo;
+	
 	configMinima();
 
-	int teclaModo = get_teclado();
+	teclaModo = get_teclado();
 	switch(teclaModo){
 		
 		case MODO_1:

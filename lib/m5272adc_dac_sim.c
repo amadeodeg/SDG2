@@ -11,7 +11,7 @@ FILE *out;
 
 void DAC_ADC_init(){
 	in=fopen(PATH_IN,"r");
-	out=fopen(PATH_OUT,"r");
+	out=fopen(PATH_OUT,"w");
 }
 
 void DAC_dato(int dato){

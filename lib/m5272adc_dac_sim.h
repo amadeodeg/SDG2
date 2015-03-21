@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <errno.h>
 
 //inicializacion de ADC y DAC
 void DAC_ADC_init();
