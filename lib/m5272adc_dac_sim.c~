@@ -26,7 +26,7 @@ int ADC_dato(){
 	int dato;
 	if(in==NULL){
 		perror("error: intento leer en un fichero cerrado.");
-		return -1;
+		return;
 	}
 	fscanf(in, "%d", &dato);
 	return dato;
