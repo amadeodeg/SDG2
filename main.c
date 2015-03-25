@@ -1,5 +1,6 @@
 #include "./lib/m5272adc_dac.h"
 #include "./lib/teclado_matricial.h"
+#include "./lib/interrupciones.h"
 #define MODO_1 1
 // void startModo1(void){
 // 	while(1){
@@ -26,8 +27,8 @@ int main(int argc, char const *argv[])
 	switch(teclaModo){
 		
 		case MODO_1:
-		//configModo1();
-		//startModo1();
+		configModo1();
+		startModo1();
 
 		break;
 

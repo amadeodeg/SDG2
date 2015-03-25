@@ -1,5 +1,7 @@
 #include <stdio.h>
 
 int get_teclado(void){
-	return getchar();
+	int a;
+	scanf("%d\n", &a);
+	return a;
 }

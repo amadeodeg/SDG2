@@ -3,8 +3,8 @@
 #include <errno.h>
 
 
-#define PATH_IN "ADC_in.txt"
-#define PATH_OUT "DAC_out.txt"
+#define PATH_IN "./sim/ADC_in.txt"
+#define PATH_OUT "./sim/DAC_out.txt"
 
 FILE *in;
 FILE *out;
