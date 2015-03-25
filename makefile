@@ -6,7 +6,7 @@ LDLIBS=-L. -lm5272_sim
 
 FLAVOUR=_sim
 
-SOURCES = main.c calculos.c
+SOURCES = main.c calculos.c 
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
 libm5272_SOURCES = 
@@ -17,7 +17,7 @@ libm5272_sim_SOURCES = \
 	lib/teclado_matricial_sim.c \
 	lib/interp.c \
 	lib/tasks.c \
-	interrupciones_sim.c
+	lib/interrupciones_sim.c
 
 
 libm5272_sim_OBJECTS = $(patsubst %.c, %.o, $(libm5272_sim_SOURCES))

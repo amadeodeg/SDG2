@@ -1,6 +1,7 @@
 #include "calculos.h"
 #include <stdlib.h>
 #include "tasks.h"
+#include "m5272adc_dac.h"
 
 static pthread_t t_sensor1_sim;
 
@@ -15,7 +16,7 @@ static void*int_sim (void* arg){
       - (period->tv_usec / 4);
     select (0, NULL, NULL, NULL, &timeout) ;
 
-    calculaModuloDFT(ADC_DATO());
+    calculaModuloDFT(ADC_dato());
   }
 }
 

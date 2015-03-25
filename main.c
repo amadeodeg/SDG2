@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
 		
 		case MODO_1:
 		configModo1();
-		startModo1();
+		//startModo1();
 
 		break;
 
