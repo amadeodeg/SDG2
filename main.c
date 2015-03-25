@@ -1,5 +1,5 @@
-#include "./lib/m5272adc_dac_sim.h"
-#include "./lib/teclado_matricial_sim.h"
+#include "./lib/m5272adc_dac.h"
+#include "./lib/teclado_matricial.h"
 #define MODO_1 1
 // void startModo1(void){
 // 	while(1){
