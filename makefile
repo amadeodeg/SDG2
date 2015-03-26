@@ -2,7 +2,7 @@
 CC=gcc
 
 CFLAGS=-g -Wall  -I.
-LDLIBS=-L. -lm5272_sim
+LDLIBS=-L. -lm5272_sim 
 
 FLAVOUR=_sim
 

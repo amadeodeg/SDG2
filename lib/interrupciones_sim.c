@@ -12,7 +12,6 @@ static void*int_sim (void* arg){
     struct timeval *period = task_get_period (pthread_self());
     timeout.tv_sec = period->tv_sec;
     timeout.tv_usec = period->tv_usec
-      + rand() % (period->tv_usec / 2)
       - (period->tv_usec / 4);
     select (0, NULL, NULL, NULL, &timeout) ;
 
