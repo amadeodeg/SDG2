@@ -4,7 +4,6 @@
 #include <string.h>
 #include "tasks.h"
 #include <stdio.h>
-#include "interp.h"
 
 #define MAXTASKS 20
 
@@ -14,7 +13,6 @@ typedef struct taskdesk_t {
   struct timeval period;
   struct timeval deadline;
   int prio;
-  struct timeval maxtime;
 } taskdesc_t;
 
 static taskdesc_t desc[MAXTASKS];
@@ -29,40 +27,6 @@ taskdesc_find (pthread_t tid)
     if (tid == desc[i].tid)
       return &desc[i];
   return NULL;
-}
-
-static int
-cmd_task (char* arg)
-{
-  if (0 == strcmp (arg, "list")) {
-    int i;
-    printf ("Id\tName           \tT\tD\tP\tR\n");
-    for (i = 0; i < ntasks; ++i) {
-      printf ("%d\t%-15s\t%d\t%d\t%d\t%d\n", i, desc[i].name,
-              timeval_get_ms(&desc[i].period),
-              timeval_get_ms(&desc[i].deadline),
-              desc[i].prio,
-              timeval_get_ms(&desc[i].maxtime));
-    }
-    return 0;
-  }
-  return 1;
-}
-
-void
-task_setup (void)
-{
-  interp_addcmd ("task", cmd_task, "task list");
-}
-
-void
-task_register_time (pthread_t tid, struct timeval* time)
-{
-  taskdesc_t* this = taskdesc_find (tid);
-  if (timeval_less (&this->maxtime, time)) {
-    this->maxtime.tv_sec = time->tv_sec;
-    this->maxtime.tv_usec = time->tv_usec;
-  }
 }
 
 struct timeval*
@@ -102,7 +66,6 @@ task_new (const char* name, void *(*f)(void *),
   tdesc->period.tv_usec = (period_ms % 1000) * 1000;
   tdesc->deadline.tv_sec = deadline_ms / 1000;
   tdesc->deadline.tv_usec = (deadline_ms % 1000) * 1000;
-  tdesc->maxtime.tv_sec = tdesc->maxtime.tv_usec = 0;
 
   return tdesc->tid;
 }
@@ -112,9 +75,14 @@ mutex_init (pthread_mutex_t* m, int prioceiling)
 {
   pthread_mutexattr_t attr;
   pthread_mutexattr_init (&attr);
+  /*
+  pthread_mutexattr_setprotocol (&attr, PTHREAD_PRIO_INHERIT);
+  */
+  /*
   pthread_mutexattr_setprotocol (&attr, PTHREAD_PRIO_PROTECT);
   pthread_mutex_init (m, &attr);
   pthread_mutex_setprioceiling(m, sched_get_priority_min(SCHED_FIFO) + prioceiling, NULL);
+  */
 }
 
 

@@ -1,12 +1,12 @@
 
 CC=gcc
 
-CFLAGS=-g -Wall  -I.
+CFLAGS=-g -Wall  -I. 
 LDLIBS=-L. -lm5272_sim 
 
 FLAVOUR=_sim
 
-SOURCES = main.c calculos.c 
+SOURCES = main.c lib/calculos.c
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
 libm5272_SOURCES = 
@@ -15,7 +15,6 @@ libm5272_OBJECTS = $(patsubst %.c, %.o, $(libm5272_SOURCES))
 libm5272_sim_SOURCES = \
 	lib/m5272adc_dac_sim.c \
 	lib/teclado_matricial_sim.c \
-	lib/interp.c \
 	lib/tasks.c \
 	lib/interrupciones_sim.c
 

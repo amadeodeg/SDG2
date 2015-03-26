@@ -3,9 +3,11 @@
 #ifndef SYMBOL
 #define NUM_MUESTRAS_PERIODO_10HZ 400
 #define SIZE(a) (sizeof(a)/sizeof(*a))
+#define NUM_FREC_MUESTREADAS 20
 #define NUM_MUESTRAS_CALCULO 80
 #define	NIVELES 32
 #define NUM_COMPR_NEC 5  //log2 (NIVELES)
+#define T_PANTALLA 40
 #endif 
 
 
