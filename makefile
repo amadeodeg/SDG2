@@ -16,7 +16,8 @@ libm5272_sim_SOURCES = \
 	lib/m5272adc_dac_sim.c \
 	lib/teclado_matricial_sim.c \
 	lib/tasks.c \
-	lib/interrupciones_sim.c
+	lib/interrupciones_sim.c \
+	lib/m5272gpio_sim.c
 
 
 libm5272_sim_OBJECTS = $(patsubst %.c, %.o, $(libm5272_sim_SOURCES))
