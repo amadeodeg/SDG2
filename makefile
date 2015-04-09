@@ -1,8 +1,9 @@
+include makeconf.$(shell uname -s)
 
 CC=gcc
 
 CFLAGS=-g -Wall  -I. 
-LDLIBS=-L. -lm5272_sim 
+LDLIBS=-L. -lm5272_sim $(ARCH_LDLIBS)
 
 FLAVOUR=_sim
 
@@ -17,7 +18,8 @@ libm5272_sim_SOURCES = \
 	lib/teclado_matricial_sim.c \
 	lib/tasks.c \
 	lib/interrupciones_sim.c \
-	lib/m5272gpio_sim.c
+	lib/m5272gpio_sim.c \
+	lib/mytime.c
 
 
 libm5272_sim_OBJECTS = $(patsubst %.c, %.o, $(libm5272_sim_SOURCES))
