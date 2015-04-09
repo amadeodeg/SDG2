@@ -7,6 +7,8 @@
 void calculaModuloDFT(int muestraADC);
 int mod2esc(int *modulo);
 
+int* getPmodFrecTot(void);
+
 extern int modFrecTot[NUM_FREC_MUESTREADAS];
 
 #endif

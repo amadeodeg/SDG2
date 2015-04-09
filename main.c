@@ -20,14 +20,15 @@ void startModo1(void){
 			if (DEBUG) {
 				time_t current_execution_time;
 				time_t resta;
-				printf("frecuencia %2d: %4d\n", i, mod2esc(&modFrecTot[i]));
+				printf("frecuencia %2d: %4d\n", i, mod2esc(*(getPmodFrecTot()+i)));
     			current_execution_time = time(NULL);
     			resta = current_execution_time - last_execution_time;
     			printf(ctime(&resta));
     			last_execution_time = current_execution_time;
 			}
 
-			DAC_dato(mod2esc(&modFrecTot[i]));
+			//DAC_dato(mod2esc(&modFrecTot[i]));
+			DAC_dato(mod2esc(*(getPmodFrecTot()+i)));
 
 			ts.tv_sec = ms / 1000;
 			ts.tv_nsec = (ms % 1000) * 1000000;

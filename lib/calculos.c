@@ -78,6 +78,10 @@ int mod2esc(int *modulo){
 	return escalado[posMax];
 }
 
+int* getPmodFrecTot(void){
+	return modFrecTot;
+}
+
 
 
 /*int main(int argc, char const *argv[])
