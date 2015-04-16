@@ -1,8 +1,8 @@
-include makeconf.$(shell uname -s)
+include Makeconf.$(shell uname -s)
 
 CC=gcc
 
-CFLAGS=-g -Wall  -I. 
+CFLAGS=-g -Wall  -I. -Ilib
 LDLIBS=-L. -lm5272_sim $(ARCH_LDLIBS)
 
 FLAVOUR=_sim

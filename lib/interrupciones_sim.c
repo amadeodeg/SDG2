@@ -11,11 +11,14 @@
 
 static pthread_t t_sensor1_sim;
 
-static void*int_sim (void* arg){
+static
+void*
+int_sim (void* arg)
+{
   //struct timeval timeout;
 
   struct timeval next_activation;
-  struct timeval now, timeout, rtime;
+  struct timeval now, timeout;
 
   struct timespec t1, t2;
   current_utc_time(&t1);

@@ -1,10 +1,10 @@
-#include "./lib/m5272adc_dac.h"
-#include "./lib/m5272gpio.h"
-#include "./lib/teclado_matricial.h"
-#include "./lib/interrupciones.h"
-#include "./lib/calculos.h"
+#include "m5272adc_dac.h"
+#include "m5272gpio.h"
+#include "teclado_matricial.h"
+#include "interrupciones.h"
+#include "calculos.h"
 #include <stdio.h>
-#include "./lib/mytime.h"
+#include "mytime.h"
 
 #define DEBUG 1
 #define MODO_1 1
@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
 
 	switch(teclaModo){
 		
-		case MODO_1:
+	case MODO_1:
 		if (DEBUG) printf("Modo1\n");
 		configModo1();
 		if (DEBUG) printf("Modo1 configurado\n");
@@ -65,7 +65,7 @@ int main(int argc, char const *argv[])
 
 		break;
 
-		default:
+	default:
 		break;
 	}
 
