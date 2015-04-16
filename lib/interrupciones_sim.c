@@ -4,7 +4,7 @@
 #include "m5272adc_dac.h"
 #include "lib/mytime.h"
 
-#define PERIOD 250 //ms
+#define PERIOD 25 //ms
 #define PRIORITY 2
 #define STACK_SIZE 1024 //bytes
 #define DEBUG 1

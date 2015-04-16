@@ -17,9 +17,7 @@ void startModo1(void){
 		int i;
 		int pin_rampa;
 		struct timespec ts;
-		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*1000;
-		//int ms = T_PANTALLA*1000/NUM_FREC_MUESTREADAS;
-		//int ms = 2000;
+		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
 		pin_rampa = 1;
 		current_utc_time(&t1);
 		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
@@ -46,18 +44,15 @@ void configMinima(){
 int main(int argc, char const *argv[])
 {
 	int teclaModo;
-	if (DEBUG) printf("teclaModo\n");
-
 	configMinima();
 	if (DEBUG) printf("ConfigMinima\n");
-
+	printf("Introduzca modo de funcionamiento:\n");
 	teclaModo = get_teclado();
 	if (DEBUG) printf("tecla: %d\n", teclaModo);
 
 	switch(teclaModo){
 		
 	case MODO_1:
-		if (DEBUG) printf("Modo1\n");
 		configModo1();
 		if (DEBUG) printf("Modo1 configurado\n");
 		startModo1();
