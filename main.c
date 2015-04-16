@@ -17,7 +17,7 @@ void startModo1(void){
 		int i;
 		int pin_rampa;
 		struct timespec ts;
-		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS;
+		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*1000;
 		//int ms = T_PANTALLA*1000/NUM_FREC_MUESTREADAS;
 		//int ms = 2000;
 		pin_rampa = 1;

@@ -11,10 +11,7 @@
 
 static pthread_t t_sensor1_sim;
 
-static
-void*
-int_sim (void* arg)
-{
+static void* int_sim (void* arg){
   //struct timeval timeout;
 
   struct timeval next_activation;
@@ -44,6 +41,7 @@ int_sim (void* arg)
     }
     calculaModuloDFT(ADC_dato());
   }
+  return NULL;
 }
 
 void sensor1_setup_sim (void){

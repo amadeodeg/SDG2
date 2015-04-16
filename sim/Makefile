@@ -1,7 +1,7 @@
 
 CC=gcc
 
-CFLAGS=-g -Wall -Werror
+CFLAGS=-g -Wall -Werror -lm
 
 
 all: clean sin sin2 boot
