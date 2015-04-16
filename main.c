@@ -1,4 +1,5 @@
 #include "./lib/m5272adc_dac.h"
+#include "./lib/m5272gpio.h"
 #include "./lib/teclado_matricial.h"
 #include "./lib/interrupciones.h"
 #include "./lib/calculos.h"

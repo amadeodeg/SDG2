@@ -26,7 +26,7 @@ int modFrecSen[NUM_FREC_MUESTREADAS];
 
 //Primera muestra 0
 int calculaSeno(int frecuencia, int muestra){
-	int M = frecuencia/10;
+	int M = frecuencia/10;  //10Hz seno conocido
 	return sinusoide10Hz[M*muestra%SIZE(sinusoide10Hz)];
 	
 }
