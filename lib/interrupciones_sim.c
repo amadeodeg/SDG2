@@ -4,17 +4,14 @@
 #include "m5272adc_dac.h"
 #include "lib/mytime.h"
 
-#define PERIOD 250 //ms
+#define PERIOD 25 //ms
 #define PRIORITY 2
 #define STACK_SIZE 1024 //bytes
 #define DEBUG 1
 
 static pthread_t t_sensor1_sim;
 
-static
-void*
-int_sim (void* arg)
-{
+static void* int_sim (void* arg){
   //struct timeval timeout;
 
   struct timeval next_activation;
@@ -44,6 +41,7 @@ int_sim (void* arg)
     }
     calculaModuloDFT(ADC_dato());
   }
+  return NULL;
 }
 
 void sensor1_setup_sim (void){

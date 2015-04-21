@@ -2,6 +2,7 @@
 
 int get_teclado(void){
 	int a;
-	scanf("%d\n", &a);
+	scanf("%d", &a);
+
 	return a;
 }
