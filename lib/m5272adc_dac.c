@@ -10,7 +10,7 @@
 #define __M5272ADC_DAC_C__
 
 #include "m5272.h"
-#include "m5272lib.c"
+#include "m5272lib.h"
 
 //--------------------------------------------------------------
 //     RUTINAS DE CONFIGURACIÓN Y MANEJO DEL DAC Y DEL ADC
@@ -150,12 +150,6 @@ int ADC_leeRxRAM(){
 
   datoLeido = dato2 >> 3;	// Reconstruye el dato leído
   datoLeido += dato1 << 5;	// a partir de dato1 y dato2
-
-  //AÑADIDO POR ALUMNOS AMADEO Y DANIEL
-  if (datoLeido>2047)
-  {
-    datoLeido |= 0xFFFFF000;
-  }
 
   // datoLeido = (datoLeido << 1); // Para igualar la escala con el DAC (Vmax(DAC)=2.5V;Vmax(ADC)=5.00V)
  

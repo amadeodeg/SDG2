@@ -4,23 +4,31 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define PASO 0.01 //Salto entre muestras. Cuanto mas pequeño, mayor resolucion.
+#define PERIODO 0.00025
+#define TIEMPO 1
+#define N_MUESTRAS ceil(TIEMPO/PERIODO)
 #define PI 3.14159265359
-#define N_MUESTRAS ceil(2*PI/PASO) //Longitud del fichero.
-#define F_OUT "ADC_in.txt" //Fichero de salida. Pensado para que el ejecutable este en la carpeta de pruebas y cree el fichero con el seno en la misma carpeta.
+#define F_OUT "ADC_in.txt"
 #define PREESCALADO 819
 
 int main(int argc, char const *argv[])
 {
-	FILE *fich; 
+	FILE *fich;
 	int i;
-	fich = fopen(F_OUT, "w+");
-	for (i = 0; i<N_MUESTRAS; i++) {
-		if (fich == NULL) {
-			perror("Error en la apertura\n");
-			printf("errno = %d.\n", errno);
-		}
-		fprintf(fich, "%f\n",PREESCALADO*sin(i*(atoi(argv[1]))*PASO));
+	fich = fopen(F_OUT,"w+");
+	for (i = 0; i < N_MUESTRAS; i++){
+		 int j;
+		 float valor=0;
+		for (j = 1; j < argc; j++){
+		 	valor+=sin(2*PI*atoi(argv[j])*i*PERIODO);
+		 }
+		 valor/=(argc-1);
+		 if (fich == NULL) {
+		 	perror("Error en la apertura\n");
+		 	printf("errno = %d.\n", errno);
+		 	return -1;
+		 } 
+		 fprintf(fich, "%d\n", (int)(valor*PREESCALADO));
 	}
 	fclose(fich);
 	return 0;

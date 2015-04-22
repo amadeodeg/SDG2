@@ -10,7 +10,7 @@
 #define __M5272GPIO_C__
 
 #include "m5272.h"
-#include "m5272lib.c"
+#include "m5272lib.h"
 
 UWORD puertoS; // Contendrá una copia del valor del puerto S para posibilitar su lectura
 
