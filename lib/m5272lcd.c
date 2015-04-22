@@ -67,3 +67,14 @@ void LCD_reset()
   retardo(RET_15MS);
 }
 
+
+
+
+//Funcion definida por Amadeo y Daniel
+
+void LCD_write_s(char* s){
+  while(s!="/0"){
+    LCD_write((UWORD)s,0x40);
+    s++;
+  }
+}

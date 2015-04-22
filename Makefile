@@ -1,6 +1,6 @@
 include Makeconf.$(shell uname -s)
 
-SIM=0
+SIM=1
 
 ifeq ($(SIM),1)
 
@@ -55,7 +55,8 @@ libm5272_sim_SOURCES = \
 	lib/tasks.c \
 	lib/interrupciones_sim.c \
 	lib/m5272gpio_sim.c \
-	lib/mytime.c
+	lib/mytime.c \
+	lib/m5272lcd_sim.c
 
 
 libm5272_sim_OBJECTS = $(patsubst %.c, %.o, $(libm5272_sim_SOURCES))

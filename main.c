@@ -3,8 +3,8 @@
 #include "teclado_matricial.h"
 #include "interrupciones.h"
 #include "calculos.h"
-#include <stdio.h>
 #include "mytime.h"
+#include "m5272lcd.h"
 
 #define DEBUG 1
 #define MODO_1 1
@@ -15,13 +15,13 @@ void startModo1(void){
 	while(1){
 		struct timespec t1, t2;
 		int i;
-		int pin_rampa;
+		UWORD pin_rampa;
 		struct timespec ts;
 		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
 		pin_rampa = 1;
 		current_utc_time(&t1);
 		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-			if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
+			//if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
 			DAC_dato(mod2esc(getPmodFrecTot()+i));
 
 			ts.tv_sec = ms / 1000;
@@ -45,18 +45,18 @@ int main(int argc, char const *argv[])
 {
 	int teclaModo;
 	configMinima();
-	if (DEBUG) printf("ConfigMinima\n");
-	printf("Introduzca modo de funcionamiento:\n");
+	//if (DEBUG) printf("ConfigMinima\n");
+	LCD_write_s("Introduzca modo de funcionamiento:");
 	teclaModo = get_teclado();
-	if (DEBUG) printf("tecla: %d\n", teclaModo);
+	//if (DEBUG) printf("tecla: %d\n", teclaModo);
 
 	switch(teclaModo){
 		
 	case MODO_1:
 		configModo1();
-		if (DEBUG) printf("Modo1 configurado\n");
+		//if (DEBUG) printf("Modo1 configurado\n");
 		startModo1();
-		if (DEBUG) printf("Modo1 empezado \n");
+		//if (DEBUG) printf("Modo1 empezado \n");
 
 		break;
 

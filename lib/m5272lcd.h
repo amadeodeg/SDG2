@@ -27,5 +27,6 @@ typedef enum {LCD_CHAR = 0x40, LCD_INST = 0x00} LCD_TIPO;
 void LCD_write(UWORD dato, LCD_TIPO tipo);
 void LCD_init();
 void LCD_reset();
+void LCD_write_s(char* s);
 
 #endif
