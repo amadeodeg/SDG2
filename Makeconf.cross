@@ -1,0 +1,57 @@
+# -*- makefile -*-
+
+SIM=
+
+top_srcdir=.
+
+newlibdir=$(top_srcdir)/newlib/m68k-elf
+SPEED = `stty -F /dev/ttyS0 -a | head -1 | cut -d' ' -f2`
+TIMEOUT = 10000
+
+CC = m68k-elf-gcc
+AS = m68k-elf-as
+AR = m68k-elf-ar
+OBJCOPY = m68k-elf-objcopy
+OBJDUMP = m68k-elf-objdump
+
+ARCH_FLAGS = -m5200
+
+CPPFLAGS = -DXPLSED $(DEFS)
+CFLAGS = $(ARCH_FLAGS) -Ilibm5272 -Iantares -I$(top_srcdir) -I$(newlibdir)/include -g -Wall -O2
+LDFLAGS = -llibm5272 -lantares -L$(top_srcdir) -L$(newlibdir)/lib -Tantares-ram-dbug.ld
+ASFLAGS = $(ARCH_FLAGS)
+LDLIBS =
+
+vpath %.c	$(top_srcdir)
+vpath %.asm	$(top_srcdir)
+vpath %.s	$(top_srcdir)
+vpath %.S	$(top_srcdir)
+
+%.o: %.asm
+	$(top_srcdir)/utils/mot2as < $< | \
+	  $(AS) $(ASFLAGS) --bitwise-or --register-prefix-optional -o $@
+
+%.o: %.S
+	$(AS) $(ASFLAGS) -o $@ $<
+
+%.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+%.a:
+	$(AR) rcs $@ $^
+
+%: %.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+%.hcf: %
+	$(OBJCOPY) --remove-section=.interrupt_vector -O srec $< $@
+
+%.log: %.hcf force
+	TIMEOUT=$(TIMEOUT) \
+	$(top_srcdir)/utils/serial-console -q -s $(SPEED) -l $< | tee $@
+
+%.dep: %
+	$(top_srcdir)/utils/gendep $< > $@
+
+.PRECIOUS: %.elf %.hcf %.o
+.PHONY: force

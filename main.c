@@ -5,6 +5,7 @@
 #include "calculos.h"
 #include "mytime.h"
 #include "m5272lcd.h"
+#include <stdint.h>
 
 #define DEBUG 1
 #define MODO_1 1
@@ -15,7 +16,7 @@ void startModo1(void){
 	while(1){
 		struct timespec t1, t2;
 		int i;
-		UWORD pin_rampa;
+		uint16_t pin_rampa;
 		struct timespec ts;
 		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
 		pin_rampa = 1;

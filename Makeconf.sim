@@ -1,0 +1,9 @@
+
+SIM=_sim
+
+CC=gcc
+
+CFLAGS=-g -Wall  -I. -Ilibm5272
+LDLIBS=-Llibm5272 -lm5272$(SIM) $(ARCH_LDLIBS)
+
+

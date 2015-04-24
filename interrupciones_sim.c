@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "tasks.h"
 #include "m5272adc_dac.h"
-#include "lib/mytime.h"
+#include "mytime.h"
 
 #define PERIOD 25 //ms
 #define PRIORITY 2
