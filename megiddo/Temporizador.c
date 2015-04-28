@@ -95,7 +95,7 @@ void initTemporizador(void)
   // Fija comienzo de vectores de interrupción en V_BASE.
   mbar_writeByte(MCFSIM_PIVR, V_BASE);
   // Escribimos la dirección de la función para TMR0
-  ACCESO_A_MEMORIA_LONG(DIR_VTMR1)= (ULONG)isr_timer1;
+  ACCESO_A_MEMORIA_LONG(DIR_VTMR1) = (ULONG)isr_timer1;
   // TMR0: PS=0x50-1 CE=00 OM=1 ORI=1 FRR=1 CLK=10 RST=1
   mbar_writeShort(MCFSIM_TMR1, 0x4F3D);
   // Ponemos a 0 el contador del TIMER0

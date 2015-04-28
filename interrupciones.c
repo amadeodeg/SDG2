@@ -20,6 +20,30 @@
 
 
 
-void __attribute__ ((interrupt_handler)) interr_periodica(void){
+void __attribute__ ((interrupt_handler)) isr_timer1(void){
 	calculaModuloDFT(ADC_dato());
+}
+
+
+//------------------------------------------------------
+// void __init(void)
+//
+// Descripción:
+//   Función por defecto de inicialización del sistema
+//------------------------------------------------------
+void configModo1(void)
+{
+  // Fija comienzo de vectores de interrupción en V_BASE.
+  mbar_writeByte(MCFSIM_PIVR, V_BASE);
+  // Escribimos la dirección de la función para TMR0
+  ACCESO_A_MEMORIA_LONG(DIR_VTMR1) = (ULONG)isr_timer1;
+  // TMR0: PS=0x50-1 CE=00 OM=1 ORI=1 FRR=1 CLK=10 RST=1
+  mbar_writeShort(MCFSIM_TMR1, 0x4F3D);
+  // Ponemos a 0 el contador del TIMER0
+  mbar_writeShort(MCFSIM_TCN1, 0x0000);
+  // Fijamos la cuenta final del contador
+  mbar_writeShort(MCFSIM_TRR1, CNT_INT1);
+  // Marca la interrupción del TIMER1 como no pendiente
+  mbar_writeLong(MCFSIM_ICR1, 0x88888F88);
+  sti();
 }

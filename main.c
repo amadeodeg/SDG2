@@ -22,7 +22,7 @@ void startModo1(void){
 		pin_rampa = 1;
 		current_utc_time(&t1);
 		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-			//if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
+			if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
 			DAC_dato(mod2esc(getPmodFrecTot()+i));
 
 			ts.tv_sec = ms / 1000;
@@ -46,18 +46,18 @@ int main(int argc, char const *argv[])
 {
 	int teclaModo;
 	configMinima();
-	//if (DEBUG) printf("ConfigMinima\n");
+	if (DEBUG) printf("ConfigMinima\n");
 	LCD_write_s("Introduzca modo de funcionamiento:");
 	teclaModo = get_teclado();
-	//if (DEBUG) printf("tecla: %d\n", teclaModo);
+	if (DEBUG) printf("tecla: %d\n", teclaModo);
 
 	switch(teclaModo){
 		
 	case MODO_1:
 		configModo1();
-		//if (DEBUG) printf("Modo1 configurado\n");
+		if (DEBUG) printf("Modo1 configurado\n");
 		startModo1();
-		//if (DEBUG) printf("Modo1 empezado \n");
+		if (DEBUG) printf("Modo1 empezado \n");
 
 		break;
 
