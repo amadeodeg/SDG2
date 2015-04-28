@@ -4,7 +4,7 @@
 
 
 #define PATH_IN "./sim/ADC_in.txt"
-#define PATH_OUT "DAC_out.txt"
+#define PATH_OUT "./sim/DAC_out.txt"
 
 #define DEBUG 1
 
@@ -17,12 +17,14 @@ void DAC_ADC_init(){
 }
 
 void DAC_dato(int dato){
+
 	if(out==NULL){
 		perror("error: intento escribir en un fichero cerrado.");
 		return;
 	}
 	fprintf(out, "%d\n", dato);
 	if (DEBUG) printf("Escrito: %d\n", dato);
+	fflush(out);
 }
 
 int ADC_dato(){
