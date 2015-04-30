@@ -17,6 +17,6 @@ typedef signed long int LONG;			// Tipo de una variable que ocupa 4 bytes con si
 typedef unsigned long int ULONG;		// Tipo de una variable que ocupa 4 bytes sin signo
 typedef unsigned int UINT;			// Tipo de una variable que ocupa 4 bytes sin signo
 
-
+#define ACCESO_A_MEMORIA_LONG(dir) (*(ULONG *)(dir))
 
 #endif

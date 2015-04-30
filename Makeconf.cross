@@ -8,17 +8,19 @@ newlibdir=$(top_srcdir)/newlib/m68k-elf
 SPEED = `stty -F /dev/ttyS0 -a | head -1 | cut -d' ' -f2`
 TIMEOUT = 10000
 
-CC = m68k-elf-gcc
-AS = m68k-elf-as
-AR = m68k-elf-ar
-OBJCOPY = m68k-elf-objcopy
-OBJDUMP = m68k-elf-objdump
+PREFIX = m68k-unknown-elf-
+
+CC = $(PREFIX)gcc
+AS = $(PREFIX)as
+AR = $(PREFIX)ar
+OBJCOPY = $(PREFIX)objcopy
+OBJDUMP = $(PREFIX)objdump
 
 ARCH_FLAGS = -m5200
 
 CPPFLAGS = -DXPLSED $(DEFS)
-CFLAGS = $(ARCH_FLAGS) -Ilibm5272 -Iantares -I$(top_srcdir) -I$(newlibdir)/include -g -Wall -O2
-LDFLAGS = -llibm5272 -lantares -L$(top_srcdir) -L$(newlibdir)/lib -Tantares-ram-dbug.ld
+CFLAGS = $(ARCH_FLAGS) -I$(top_srcdir)/libm5272 -I$(top_srcdir)/antares -I$(top_srcdir) -I$(newlibdir)/include -g -Wall -O2
+LDFLAGS = -L$(top_srcdir) -L$(top_srcdir)/libm5272 -L$(newlibdir)/lib -lm5272 -lantares -lnewlib -Tantares-ram-dbug.ld
 ASFLAGS = $(ARCH_FLAGS)
 LDLIBS =
 

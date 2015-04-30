@@ -1,4 +1,7 @@
 #include "calculos.h" //Funciones llamadas en atencion a la interrupcion
+#include "m5272adc_dac.h"
+#include "m5272.h"
+#include "m5272lib.h"
 //TODO include
 
 #ifndef DATOS
