@@ -6,6 +6,7 @@
 #include "mytime.h"
 #include "m5272lcd.h"
 #include "m5272lib.h"
+#include <time.h>
 #include <stdint.h>
 
 #define DEBUG 1
