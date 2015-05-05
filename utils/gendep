@@ -1,0 +1,25 @@
+#!/bin/sh
+
+elf=$1
+
+cat <<EOF
+//------------------------------- Código C GNU -------------------------------//
+
+EOF
+
+m68k-elf-objdump -S -m m68k --section=.text -d --prefix-addresses $elf | \
+    grep -v "Disassembly of section .text:" | \
+    sed -e 's/ <.*\+0x.*> / \t\t/' -e 's/ \(<.*>\) / \1\t/' 
+cat <<EOF
+
+//------------------------------------------//
+//            TABLA DE SIMBOLOS             //
+//------------------------------------------//
+EOF
+
+m68k-elf-nm -n --demangle $elf | grep -i " D "
+m68k-elf-nm -n --demangle $elf | grep -i " B "
+m68k-elf-nm -n --demangle $elf | grep -i " R "
+
+exit 0
+
