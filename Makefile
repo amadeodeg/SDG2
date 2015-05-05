@@ -16,7 +16,7 @@ SUBDIRS = \
 		libm5272
 
 
-all: clean $(SUBDIRS) main.hcf
+all: clean $(SUBDIRS) main.hcf main.dep
 
 main: $(OBJECTS)
 
@@ -26,5 +26,5 @@ clean:
 $(SUBDIRS):
 	@echo $@
 	$(MAKE) -C $@
-load:
+load: 
 	$(top_srcdir)/utils/serial-console -s 19200 -l main.hcf
