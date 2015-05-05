@@ -11,6 +11,7 @@
 
 #include "m5272.h"
 #include "m5272lib.h"
+#include <stdio.h>
 
 //--------------------------------------------------------------
 //     RUTINAS DE CONFIGURACIÓN Y MANEJO DEL DAC Y DEL ADC
@@ -199,35 +200,12 @@ int ADC_dato()
 //------------------------------------------------------------------------------
 void ADC_test(long int datoDAC)
 {  
-  int datoLeido=0,errorAbs=0,errorRelat=0;
-   
-  datoLeido = ADC_dato();
+  int datoLeido = ADC_dato() * 2; // *2 Para igualar la escala con el DAC
+  long int errorAbs = (datoDAC > datoLeido)? datoDAC-datoLeido : datoLeido-datoDAC;
   
-  datoLeido *= 2; // Para igualar la escala con el DAC
-
-  output(" ");
-  print_number (10, 1, (long)datoLeido);
-  output("\t ");
-  print_number (10, 1, (long)datoDAC);
-  output("\t  ");
-  
-  if (datoDAC > datoLeido)
-     errorAbs=datoDAC-datoLeido;
-  else
-     errorAbs=datoLeido-datoDAC;
-
-  print_number (10, 1, errorAbs);
-  output("\t\t  ");
-
-  if (datoDAC>0)
-     errorRelat = (100 * errorAbs)/datoDAC;
-  else if (datoLeido>0)
-     errorRelat = (100 * errorAbs)/datoLeido;
-  else
-     errorRelat = 100;
-
-  print_number (10, 1, errorRelat);
-  output("%\n");
+  printf(" %d\t %ld\t  %ld\t\t  %ld%%\n", datoLeido, datoDAC, errorAbs,
+         ((datoDAC > 0)? ((100 * errorAbs)/datoDAC) :
+          (datoLeido > 0)? ((100 * errorAbs)/datoLeido) : 100) );
 }
 
 #endif

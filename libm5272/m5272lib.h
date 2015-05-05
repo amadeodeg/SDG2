@@ -17,6 +17,16 @@ typedef signed long int LONG;			// Tipo de una variable que ocupa 4 bytes con si
 typedef unsigned long int ULONG;		// Tipo de una variable que ocupa 4 bytes sin signo
 typedef unsigned int UINT;			// Tipo de una variable que ocupa 4 bytes sin signo
 
+#define RET_1S		1000000		// Constante para un retardo de 1seg. aprox. en retardo()
+#define RET_15MS        15000		// Constante para un retardo de 15ms aprox. en retardo()
+#define RET_3MS		3000		// Constante para un retardo de 3ms aprox. en retardo()
+
 #define ACCESO_A_MEMORIA_LONG(dir) (*(ULONG *)(dir))
+
+// Desahabilita las interrupciones
+#define cli() __asm__ __volatile__ ( "move.w %%sr, %%d0 \n\t ori.l #0x0700,%%d0 \n\t move.w %%d0, %%sr \n\t" : : : "d0", "memory")
+
+// Habilita las interrupciones
+#define sti() asm volatile ( "move.w %%sr, %%d0 \n\t andi.l #0xF8FF,%%d0 \n\t move.w %%d0, %%sr \n\t" : : : "d0", "memory")
 
 #endif
