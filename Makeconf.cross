@@ -18,7 +18,7 @@ OBJDUMP = $(PREFIX)objdump
 
 ARCH_FLAGS = -m5200
 
-CPPFLAGS = -DXPLSED $(DEFS)
+CPPFLAGS = -D__rtems__ $(DEFS)
 CFLAGS = $(ARCH_FLAGS)  -I$(top_srcdir)/libm5272 -I$(top_srcdir) -I$(newlibdir)/include -g -Wall -O2
 LDFLAGS = -L$(top_srcdir) -L$(newlibdir)/lib -L$(top_srcdir)/libantares -L$(top_srcdir)/libm5272 -Tantares-ram-dbug.ld
 ASFLAGS = $(ARCH_FLAGS)

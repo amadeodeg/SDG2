@@ -1,4 +1,5 @@
 top_srcdir=.
+SPEED=19200
 
 include $(top_srcdir)/Makeconf.$(shell uname -s)
 include $(top_srcdir)/Makeconf.FLAVOUR
@@ -15,7 +16,7 @@ SUBDIRS = \
 		libm5272
 
 
-all: clean $(SUBDIRS) main
+all: clean $(SUBDIRS) main.hcf
 
 main: $(OBJECTS)
 
@@ -25,3 +26,5 @@ clean:
 $(SUBDIRS):
 	@echo $@
 	$(MAKE) -C $@
+load:
+	$(top_srcdir)/utils/serial-console -s 19200 -l main.hcf

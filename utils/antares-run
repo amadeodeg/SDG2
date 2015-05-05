@@ -7,7 +7,7 @@ set f [open [lindex $argv 0] r]
 set data [read $f]
 close $f
 
-spawn ../utils/serial-console -d /dev/ttyS0 -s 19200 -m 8N1
+spawn ../utils/serial-console -d /dev/tty.usbserial -s 19200 -m 8N1
 send "\r"
 expect "dBUG> "
 send "dl\r"

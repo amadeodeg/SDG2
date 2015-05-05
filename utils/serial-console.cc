@@ -136,7 +136,7 @@ static Buffer buf[2];
 int
 main (int argc, char* argv[])
 {
-  const char* device = "/dev/ttyS0";
+  const char* device = "/dev/tty.usbserial";
   const char* speed = "19200";
   const char* mode = "8N1";
   const char* load = 0;

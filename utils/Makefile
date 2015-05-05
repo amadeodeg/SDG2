@@ -6,5 +6,5 @@ CXXFLAGS = $(CFLAGS)
 all: serial-console mot2as test-split
 
 clean:
-	rm -f *.o *~ *.exe *.dSYM serial-console mot2as test-split
+	rm -rf *.o *~ *.exe *.dSYM serial-console mot2as test-split
 

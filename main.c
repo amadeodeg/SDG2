@@ -9,8 +9,9 @@
 #include <time.h>
 #include <stdint.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #define MODO_1 1
+#define PIN_RAMPA 8192 //PIN 13
 
 
 
@@ -21,7 +22,7 @@ void startModo1(void){
 		uint16_t pin_rampa;
 		struct timespec ts;
 		int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
-		pin_rampa = 1;
+		pin_rampa = PIN_RAMPA;
 		//current_utc_time(&t1);
 		for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
 			if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
@@ -41,6 +42,8 @@ void startModo1(void){
 
 void configMinima(){
 	DAC_ADC_init();
+	LCD_init();
+	
 }
 
 
@@ -48,6 +51,7 @@ int main(int argc, char const *argv[])
 {
 	int teclaModo;
 	configMinima();
+	set16_puertoS(32768);
 	if (DEBUG) printf("ConfigMinima\n");
 	LCD_write_s("Introduzca modo de funcionamiento:");
 	teclaModo = get_teclado();
