@@ -1,6 +1,8 @@
 #ifndef M5272GPIO_H
 #define M5272GPIO_H
 
+#include "m5272lib.h"
+
 void set_puertoS_H (UBYTE valor);
 #define set_puertoS_L(valor) set_puertoS(valor)
 void set_puertoS (UBYTE valor);
