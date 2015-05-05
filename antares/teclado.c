@@ -9,7 +9,7 @@
 
 #include "m5272lib.h"
 #include "m5272gpio.h"
-#include "megiddo.h"
+#include "../megiddo/megiddo.h"
 
 
 #define NUM_FILAS 4

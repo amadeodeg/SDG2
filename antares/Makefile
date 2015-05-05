@@ -11,15 +11,16 @@ antares_SOURCES = \
 	m5272gpio.c \
 	m5272int.c \
 	m5272lcd.c \
-	teclado.c
+	m5272lib.c \
+	teclado_matricial.c 
 	
 antares_OBJECTS = $(patsubst %.c, %.o, $(antares_SOURCES))
 
 
 
-all: clean antares.a
+all: clean libantares.a
 
-antares.a: $(antares_OBJECTS)
+libantares.a: $(antares_OBJECTS)
 
 clean:
 	$(RM) *.o antares*.a

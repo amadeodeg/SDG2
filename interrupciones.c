@@ -6,6 +6,9 @@
 
 #ifndef DATOS
 
+#define DIR_VTMR1 4*(V_BASE+6)
+#define CNT_INT1 MCF_CLK/(FREC_INT*0x50*16)
+
 #define V_BASE 0x40   //Direccion inicio (base) de vector interrupciones
 #define DIR_VTMR0 4*(V_BASE+5)	//Direccion del vector de timer0
 #define FREC_INT 4000	//Frecuencia de interrupcion periodica
