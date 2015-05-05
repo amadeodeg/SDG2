@@ -3,7 +3,7 @@ include $(top_srcdir)/Makeconf
 
 LIBGLOSS_OBJS = close.o fstat.o getpid.o isatty.o kill.o lseek.o \
 		open.o print.o putnum.o read.o sbrk.o stat.o unlink.o \
-		write.o reset.o exit.o
+		write.o reset.o exit.o nanosleep.o
 
 
 all: libantares.a
