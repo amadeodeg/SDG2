@@ -38,3 +38,10 @@ utils/serial-console
 utils/serial-console.dSYM
 utils/test-split
 utils/test-split.dSYM
+calculos.o
+interrupciones_sim.o
+libm5272/libm5272_sim.a
+libm5272/libm5272.a
+mytime.o
+sim/DAC_out.txt
+tasks.o
