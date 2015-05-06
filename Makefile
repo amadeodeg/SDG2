@@ -5,10 +5,9 @@ include $(top_srcdir)/Makeconf.$(shell uname -s)
 include $(top_srcdir)/Makeconf.FLAVOUR
 include $(top_srcdir)/Makeconf.$(FLAVOUR)
 
-SOURCES = \
-		main.c \
-		calculos.c \
-		interrupciones$(SIM).c 
+SOURCES +=	main.c \
+			calculos.c \
+			interrupciones$(SIM).c 
 
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
@@ -16,15 +15,12 @@ SUBDIRS = \
 		libm5272
 
 
-all: clean $(SUBDIRS) main.hcf main.dep
+all: clean  main.hcf main.dep
 
 main: $(OBJECTS)
 
 clean:
-	$(RM) *.o main
+	$(RM) *.o main *.dep *.hcf
 
-$(SUBDIRS):
-	@echo $@
-	$(MAKE) -C $@
 load: 
 	$(top_srcdir)/utils/serial-console -s 19200 -l main.hcf

@@ -17,9 +17,9 @@ static void* int_sim (void* arg){
   struct timeval next_activation;
   struct timeval now, timeout;
 
-  struct timespec t1, t2;
-  current_utc_time(&t1);
-  current_utc_time(&t2);
+  // struct timespec t1, t2;
+  // current_utc_time(&t1);
+  // current_utc_time(&t2);
 
   gettimeofday (&next_activation, NULL);
 
@@ -34,11 +34,11 @@ static void* int_sim (void* arg){
     timeval_sub (&timeout, &next_activation, &now);
     select (0, NULL, NULL, NULL, &timeout) ;
 
-    if (DEBUG) {
-      current_utc_time(&t2);
-      //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
-      t1 = t2;
-    }
+    // if (DEBUG) {
+    //   current_utc_time(&t2);
+    //   //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
+    //   t1 = t2;
+    // }
     calculaModuloDFT(ADC_dato());
   }
   return NULL;

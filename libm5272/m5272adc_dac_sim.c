@@ -6,7 +6,7 @@
 #define PATH_IN "./sim/ADC_in.txt"
 #define PATH_OUT "./sim/DAC_out.txt"
 
-#define DEBUG 1
+#define DEBUG 0
 
 FILE *in;
 FILE *out;
