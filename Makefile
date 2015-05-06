@@ -15,7 +15,7 @@ SUBDIRS = \
 		libm5272
 
 
-all: clean  main.hcf main.dep
+all: clean main
 
 main: $(OBJECTS)
 

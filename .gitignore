@@ -5,7 +5,5 @@ libm5272/*.o
 main
 main.dep
 main.hcf
-libm5272/libm5272_sim.a
-libm5272/libm5272.a
 sim/DAC_out.txt
 

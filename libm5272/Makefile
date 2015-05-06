@@ -25,7 +25,7 @@ libm5272_OBJECTS = $(patsubst %.c, %.o, $(libm5272_SOURCES))
 
 
 
-all: clean libm5272$(SIM).a
+all: libm5272$(SIM).a
 
 libm5272.a: $(libm5272_OBJECTS)
 libm5272_sim.a: $(libm5272_sim_OBJECTS)
