@@ -7,7 +7,7 @@ cat <<EOF
 
 EOF
 
-m68k-unknown-elf-objdump -S -m m68k --section=.text -d --prefix-addresses $elf | \
+m68k-unknown-elf-objdump -S -m m68k:5200 --section=.text -d --prefix-addresses $elf | \
     grep -v "Disassembly of section .text:" | \
     gsed -e 's/ <.*\+0x.*> / \t\t/' -e 's/ \(<.*>\) / \1\t/' 
 cat <<EOF

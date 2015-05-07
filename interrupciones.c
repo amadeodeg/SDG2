@@ -2,6 +2,8 @@
 #include "m5272adc_dac.h"
 #include "m5272.h"
 #include "m5272lib.h"
+#include <stdint.h>
+#include "m5272gpio.h"
 //TODO include
 
 #ifndef DATOS
@@ -27,7 +29,9 @@
 
 
 void __attribute__ ((interrupt_handler)) isr_timer1(void){
-	calculaModuloDFT(ADC_dato());
+	//calculaModuloDFT(ADC_dato());
+  uint16_t n= 1;
+  set16_puertoS(n++%1?16:0);
 }
 
 

@@ -7,3 +7,7 @@ main.dep
 main.hcf
 sim/DAC_out.txt
 
+m5272adc_dac_sim.o
+libm5272/m5272gpio_sim.o
+libm5272/m5272lcd_sim.o
+libm5272/teclado_matricial_sim.o
