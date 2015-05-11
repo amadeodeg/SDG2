@@ -27,9 +27,9 @@ int get_teclado(void)
   BYTE fila, columna, fila_mask;
   int tecla;
   static char teclas[4][4] = {{"123C"},
-			      {"456D"},
-			      {"789E"},
-			      {"A0BF"}};
+			                        {"456D"},
+			                        {"789E"},
+			                        {"A0BF"}};
 
   // Bucle de exploración del teclado
   while (1) {
@@ -58,5 +58,14 @@ int get_teclado(void)
   }
 
   // Reiniciamos exploración
+}
+
+int get_teclado_long(void){
+  int tecla;
+  int[10] array;
+  int count=0;
+  while ( count<=10 && (tecla=get_teclado())<10){
+    array[count]
+  }
 }
 

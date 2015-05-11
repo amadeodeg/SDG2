@@ -29,8 +29,8 @@
 
 
 void __attribute__ ((interrupt_handler)) isr_timer1(void){
-	//calculaModuloDFT(ADC_dato());
-  uint16_t n= 1;
+	calculaModuloDFT(ADC_dato());
+  uint16_t n = 1;
   set16_puertoS(n++%1?16:0);
 }
 
@@ -41,7 +41,7 @@ void __attribute__ ((interrupt_handler)) isr_timer1(void){
 // Descripción:
 //   Función por defecto de inicialización del sistema
 //------------------------------------------------------
-void configModo1(void)
+void configInt4k(void)
 {
   // Fija comienzo de vectores de interrupción en V_BASE.
   mbar_writeByte(MCFSIM_PIVR, V_BASE);
