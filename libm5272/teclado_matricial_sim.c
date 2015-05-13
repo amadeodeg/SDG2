@@ -3,7 +3,7 @@
 
 int get_tecla(void){
 	int tecla;
-	tecla = getchar()-'0';
+	tecla = getchar();
 	return tecla;
 }
 

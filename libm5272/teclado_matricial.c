@@ -61,7 +61,7 @@ int get_tecla(void)
 }
 
 int get_numero_teclado(void){
-   int tecla;
+   int tecla = 0;
   // int aux;
   // while ( (aux = get_tecla() - '0') < 10){ 
   //   tecla = tecla*10 + aux;

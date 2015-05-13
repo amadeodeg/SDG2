@@ -22,30 +22,30 @@ void
 startModoDefault (uint16_t puertoS)
 {
     while(1) {
-        //struct timespec t1, t2;
-        int i;
-        struct timespec ts;
-        struct timespec timePulse = {0, 1000000};
-        int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
+    //     //struct timespec t1, t2;
+    //     int i;
+         struct timespec ts;
+         struct timespec timePulse = {0, 1000000};
+     //    int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
 		
-        //current_utc_time(&t1);
-        for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-            if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
-            DAC_dato(mod2esc(getPmodFrecTot()+i));
+    //     //current_utc_time(&t1);
+    //     for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
+    //         //if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
+    //         DAC_dato(mod2esc(getPmodFrecTot()+i));
 
-            ts.tv_sec = ms / 1000;
-            ts.tv_nsec = (ms % 1000) * 1000000;
-            nanosleep(&ts, NULL);
-        }
-        //current_utc_time(&t2);
-        //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
-        //reset bit inico rampa
+    //         ts.tv_sec = ms / 1000;
+    //         ts.tv_nsec = (ms % 1000) * 1000000;
+    //         nanosleep(&ts, NULL);
+    //     }
+    //     //current_utc_time(&t2);
+    //     //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
+    //     //reset bit inico rampa
 		
         set16_puertoS(puertoS = (puertoS | 0x0010));  //bit 4 a uno el resto como estaba
         nanosleep(&timePulse,NULL);
         set16_puertoS(puertoS = (puertoS & 0xFFDF)); //bit 4 a 0 resto como estaba
-
-    }
+         if (DEBUG) printf("PuertoS:%d\n", puertoS);
+     }
 }
 
 
@@ -77,6 +77,7 @@ configMinima ()
     DAC_ADC_init();
     if (DEBUG)
         printf("DAC configurado\n");
+    LCD_reset();
     LCD_init();
     if (DEBUG)
         printf("LCD configurado\n");
@@ -110,22 +111,24 @@ configModo2 ()
 
 int
 main (int argc, char const *argv[])
-{
+{   
     uint16_t puertoS;
     int teclaModo;
+    char* letra = "Modo";
     struct timespec t1 = {2, 0};
 
     if(DEBUG)
         printf("Empieza el programa\n");
     configMinima();
     puertoS = 32; // LED 5
-    set16_puertoS(puertoS);
-    nanosleep(&t1,NULL);
 
     if (DEBUG)
         printf("ConfigMinima\n");
-    LCD_write_s("Modo");
-    teclaModo = get_tecla();
+    while(*letra){        // Imprime "HOLA" en el display
+        LCD_dato(*letra++);   // car·cter a car·cter
+        nanosleep(&t1,NULL);        // Mantenemos el mensaje 1 segundo
+    }
+    teclaModo = get_tecla() - '0';
     if (DEBUG)
         printf("tecla: %d\n", teclaModo);
 
