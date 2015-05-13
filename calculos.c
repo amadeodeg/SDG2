@@ -89,15 +89,15 @@ int* getPmodFrecTot(void){
 }
 
 void creaArrayFrecuencias(int inicial, int final) {
-	int paso;
-	int i = 0;
-	int diferencia = final - inicial;
-	paso = diferencia/20;
-	frecuenciasMuestreo[0]=inicial;
-	for ( i=0; i<NUM_FREC_MUESTREADAS; i++) {
-	frecuenciasMuestreo[i+1] = frecuenciasMuestreo[i]+paso;
-	if (DEBUG) { printf("%d\n", frecuenciasMuestreo[i+1]);}
-	}
+	// int paso;
+	// int i = 0;
+	// int diferencia = final - inicial;
+	// paso = diferencia/20;
+	// frecuenciasMuestreo[0]=inicial;
+	// for ( i=0; i<NUM_FREC_MUESTREADAS; i++) {
+	// frecuenciasMuestreo[i+1] = frecuenciasMuestreo[i]+paso;
+	// if (DEBUG) { printf("%d\n", frecuenciasMuestreo[i+1]);}
+	// }
 }
 
 
