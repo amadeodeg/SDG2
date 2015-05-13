@@ -1,8 +1,14 @@
 #include <stdio.h>
+#include <math.h>
 
-int get_teclado(void){
-	int a;
-	scanf("%d", &a);
+int get_tecla(void){
+	int tecla;
+	tecla = getchar()-'0';
+	return tecla;
+}
 
-	return a;
+int get_numero_teclado(void){
+	int numero;
+	scanf("%d", &numero);
+  	return numero;
 }

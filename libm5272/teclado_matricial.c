@@ -22,7 +22,7 @@
 //   Explora el teclado matricial y devuelve la tecla
 //   pulsada
 //------------------------------------------------------
-int get_teclado(void)
+int get_tecla(void)
 {
   BYTE fila, columna, fila_mask;
   int tecla;
@@ -60,12 +60,19 @@ int get_teclado(void)
   // Reiniciamos exploración
 }
 
-int get_teclado_long(void){
+int get_numero_teclado(void){
   int tecla;
-  int[10] array;
-  int count=0;
-  while ( count<=10 && (tecla=get_teclado())<10){
-    array[count]
+  int i;
+  int array[10];
+  int count = 0;
+  while ( count <= 10 && (tecla = get_tecla()) < 10){ 
+    array[count] = tecla;
+    count++;
   }
+  tecla = 0;
+  for (i = 0; i<=count; i++){
+    tecla += array[i]*(pow(10,count));
+  }
+  return tecla;
 }
 

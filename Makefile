@@ -15,9 +15,12 @@ SUBDIRS = \
 		libm5272
 
 
-all: clean main
+all: clean libs main
 
 main: $(OBJECTS)
+
+libs: 
+	$(MAKE) -C $(top_srcdir)/libm5272
 
 clean:
 	$(RM) *.o main *.dep *.hcf

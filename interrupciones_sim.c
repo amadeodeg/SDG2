@@ -48,7 +48,7 @@ void sensor1_setup_sim (void){
   t_sensor1_sim = task_new ("int_sim", int_sim, PERIOD, PERIOD, PRIORITY, STACK_SIZE);
 }
 
-void configModo1(){
+void configInt4k(){
 	sensor1_setup_sim();
 }
 

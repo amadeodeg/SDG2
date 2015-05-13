@@ -11,6 +11,7 @@
 
 #define DEBUG 1
 #define MODO_1 1
+#define MODO_RANGO_2 2
 #define MODO_TEST_9 9
 #define MODO_TEST_8 8
 #define PIN_RAMPA 16 //PIN 4
@@ -19,7 +20,7 @@
 
 
 
-void startModo1(uint16_t puertoS){
+void startModoDefault(uint16_t puertoS){
 	while(1){
 		//struct timespec t1, t2;
 		int i;
@@ -52,6 +53,7 @@ void startModo1(uint16_t puertoS){
 	}
 }
 
+
 void startModoTestDAC() {
 	int cont = 0;
 	struct timespec timePulse = {0, 250000};
@@ -83,9 +85,14 @@ void configModo1() {
 }
 
 void configModo2() {
-	int inicial;
-	int final;
-	
+	int inicial = 50;
+	int final = 2000;
+	LCD_write_s("F start");
+	inicial = get_numero_teclado();
+	LCD_write_s("F end");
+	final = get_numero_teclado();
+	if (DEBUG) printf("inicial: %d final %d \n", inicial, final);
+
 	creaArrayFrecuencias(inicial, final);
 	configInt4k();
 
@@ -96,7 +103,7 @@ int main(int argc, char const *argv[])
 {
 	uint16_t puertoS;
 	int teclaModo;
-	struct timespec t1 = {5, 0};
+	struct timespec t1 = {2, 0};
 	if(DEBUG) printf("Empieza el programa\n");
 	configMinima();
 	puertoS = 32; // LED 5
@@ -105,7 +112,7 @@ int main(int argc, char const *argv[])
 
 	if (DEBUG) printf("ConfigMinima\n");
 	LCD_write_s("Modo");
-	teclaModo = get_teclado();
+	teclaModo = get_tecla();
 	if (DEBUG) printf("tecla: %d\n", teclaModo);
 
 	switch(teclaModo){
@@ -113,24 +120,25 @@ int main(int argc, char const *argv[])
 	case MODO_1:
 		configModo1();
 		if (DEBUG) printf("Modo1 configurado\n");
-		startModo1(puertoS);
+		startModoDefault(puertoS);
 		if (DEBUG) printf("Modo1 empezado \n");
 
+		break;
+	case MODO_RANGO_2:
+		configModo2();
+		if (DEBUG) printf("Modo2 configurado\n");
+		startModoDefault(puertoS);
 		break;
 	case MODO_TEST_9:
 		startModoTestDAC();
+		break;
 	case MODO_TEST_8:
 		startModoTestADC_DAC();
-	case MODO_RANGO_2:
-		configModo2();
-		startModo2();
+		break;
 
 	default:
-		configModo1();
-		if (DEBUG) printf("Modo1 configurado\n");
-		startModo1(puertoS);
-		if (DEBUG) printf("Modo1 empezado \n");
-		break;
+		LCD_write_s("No valido");
+		nanosleep(&t1, NULL);
 	}
 
 
