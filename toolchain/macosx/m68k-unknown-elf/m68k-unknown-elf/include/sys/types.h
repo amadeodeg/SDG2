@@ -25,10 +25,6 @@
 #include <machine/_types.h>
 
 #if defined(__rtems__) || defined(__XMK__)
-
-
-typedef int _mode_t;
-
 /*
  *  The following section is RTEMS specific and is needed to more
  *  closely match the types defined in the BSD sys/types.h.
