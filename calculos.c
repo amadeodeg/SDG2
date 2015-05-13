@@ -61,11 +61,7 @@ void calculaModuloDFT(int muestraADC){
 			modFrecSen[i]=0;
 		}
 		numMuestrasLeidas=0;
-		
 	}
-
-
-
 }
 
 int mod2esc(int *modulo){
@@ -92,7 +88,7 @@ void creaArrayFrecuencias(int inicial, int final) {
 	// int paso;
 	// int i = 0;
 	// int diferencia = final - inicial;
-	// paso = diferencia/20;
+	// paso = diferencia/NUM_FREC_MUESTREADAS;
 	// frecuenciasMuestreo[0]=inicial;
 	// for ( i=0; i<NUM_FREC_MUESTREADAS; i++) {
 	// frecuenciasMuestreo[i+1] = frecuenciasMuestreo[i]+paso;

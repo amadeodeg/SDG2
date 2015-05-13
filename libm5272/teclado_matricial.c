@@ -61,16 +61,11 @@ int get_tecla(void)
 }
 
 int get_numero_teclado(void){
-  // int tecla;
-  // int i;
-  // int array[4];
-  // int count = 0;
-  // while ( count < 4 && (tecla = get_tecla()) < 10){ 
-  //   array[count] = tecla;
-  //   count++;
+   int tecla;
+  // int aux;
+  // while ( (aux = get_tecla() - '0') < 10){ 
+  //   tecla = tecla*10 + aux;
   // }
-  // //tecla = array[0]*1000
-  // return tecla;
-  return 0;
+  return tecla;
 }
 
