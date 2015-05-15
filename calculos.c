@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "m5272gpio.h"
 #include "calculos.h"
 
 #ifndef SYMBOL
@@ -26,29 +27,27 @@ int modFrecCos[NUM_FREC_MUESTREADAS];
 int modFrecSen[NUM_FREC_MUESTREADAS];
 
 //Primera muestra 0
-int calculaSeno(int frecuencia, int muestra){
+inline int calculaSeno(int frecuencia, int muestra){
 	int M = frecuencia/10;  //10Hz seno conocido
 	//printf("valorSeno:  %4d frecuencia: %4d muestra: %2d\n", sinusoide10Hz[M*muestra%SIZE(sinusoide10Hz)],frecuencia,muestra);
 	return sinusoide10Hz[M*muestra%SIZE(sinusoide10Hz)];
 	
 }
 
-int calculaCoseno(int frecuencia, int muestra){
+inline int calculaCoseno(int frecuencia, int muestra){
 	int M = frecuencia/10;
 	return sinusoide10Hz[(M*muestra+(NUM_MUESTRAS_PERIODO_10HZ/4))%SIZE(sinusoide10Hz)];
 }
 
-void calculaModuloDFT(int muestraADC){
+inline void calculaModuloDFT(int muestraADC){
 	int i;
 	//if (DEBUG) printf("%d\n", muestraADC);
+	set_gpio(4, 1);
 	for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-		//modFrecCos[i]+=muestraADC*calculaCoseno(frecuenciasMuestreo[i]/NUM_MUESTRAS_CALCULO,i);
-		//modFrecSen[i]+=muestraADC*calculaSeno(frecuenciasMuestreo[i]/NUM_MUESTRAS_CALCULO,i);
 		modFrecCos[i]=modFrecCos[i]+muestraADC*calculaCoseno(frecuenciasMuestreo[i],numMuestrasLeidas);
 		modFrecSen[i]=modFrecSen[i]+muestraADC*calculaSeno(frecuenciasMuestreo[i],numMuestrasLeidas);
-		//printf("nFrecuancia: %2d  seno: %10d coseno: %10d\n",i,modFrecSen[i], modFrecCos[i]);
 	}
-
+	set_gpio(4, 0);
 	numMuestrasLeidas++;
 	if (numMuestrasLeidas>=NUM_MUESTRAS_CALCULO){
 		int i;
@@ -62,6 +61,7 @@ void calculaModuloDFT(int muestraADC){
 		}
 		numMuestrasLeidas=0;
 	}
+	set_gpio(4, 1);
 }
 
 int mod2esc(int *modulo){

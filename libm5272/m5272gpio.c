@@ -14,6 +14,10 @@
 
 UWORD puertoS; // Contendrá una copia del valor del puerto S para posibilitar su lectura
 
+UWORD get16_puertoS() {
+  return puertoS;
+}
+
 //-------------------------------------------------------------
 // void set_puertoS_H (UBYTE valor)
 //
@@ -171,6 +175,10 @@ void set_led(UWORD valor)
   puerto1_valor|=mascara;
   mbar_writeShort(MCFSIM_PADAT,puerto1_valor);
   set_puerto0(valor|(valor<<4));
+}
+
+void set_gpio(int gpio, int valor) {
+  set16_puertoS((get16_puertoS() & ~(1 << gpio)) | (valor << gpio)); //Pone valor en gpio
 }
 
 #endif

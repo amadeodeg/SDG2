@@ -19,13 +19,14 @@
 
 
 void
-startModoDefault (uint16_t puertoS)
+startModoDefault ()
 {
+    //struct timespec timePulse = {0, 1000000};
     while(1) {
     //     //struct timespec t1, t2;
     //     int i;
-         struct timespec ts;
-         struct timespec timePulse = {0, 1000000};
+    //     struct timespec ts;
+         
      //    int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
 		
     //     //current_utc_time(&t1);
@@ -40,11 +41,14 @@ startModoDefault (uint16_t puertoS)
     //     //current_utc_time(&t2);
     //     //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
     //     //reset bit inico rampa
-		
-        set16_puertoS(puertoS = (puertoS | 0x0010));  //bit 4 a uno el resto como estaba
-        nanosleep(&timePulse,NULL);
-        set16_puertoS(puertoS = (puertoS & 0xFFDF)); //bit 4 a 0 resto como estaba
-         if (DEBUG) printf("PuertoS:%d\n", puertoS);
+		usleep(40000);
+        set16_puertoS( (get16_puertoS()) | 0x0010);  //bit 4 a uno el resto como estaba
+        //nanosleep(&timePulse, NULL);
+        //if(DEBUG) printf("me duermo\n");
+        usleep(1000);
+        //if(DEBUG) printf("me despierto\n");
+        set16_puertoS( (get16_puertoS()) & ~0x0010); //bit 4 a 0 resto como estaba
+        
      }
 }
 
@@ -74,6 +78,9 @@ startModoTestADC_DAC ()
 void
 configMinima ()
 {
+    //gpio_setup();
+    //if (DEBUG)
+     //   printf("GPIO configurado\n");
     DAC_ADC_init();
     if (DEBUG)
         printf("DAC configurado\n");
@@ -112,22 +119,21 @@ configModo2 ()
 int
 main (int argc, char const *argv[])
 {   
-    uint16_t puertoS;
     int teclaModo;
     char* letra = "Modo";
-    struct timespec t1 = {2, 0};
 
     if(DEBUG)
         printf("Empieza el programa\n");
     configMinima();
-    puertoS = 32; // LED 5
 
     if (DEBUG)
         printf("ConfigMinima\n");
-    while(*letra){        // Imprime "HOLA" en el display
+
+    while(*letra){       
         LCD_dato(*letra++);   // car·cter a car·cter
-        nanosleep(&t1,NULL);        // Mantenemos el mensaje 1 segundo
+        usleep(20000);      // Mantenemos el mensaje 1 segundo
     }
+    
     teclaModo = get_tecla() - '0';
     if (DEBUG)
         printf("tecla: %d\n", teclaModo);
@@ -136,9 +142,14 @@ main (int argc, char const *argv[])
 
     case MODO_RANGO_2:
         configModo2();
+        letra = "2";
+        while(*letra){       
+            LCD_dato(*letra++);   // car·cter a car·cter
+            usleep(20000);        // Mantenemos el mensaje 1 segundo
+        }
         if (DEBUG)
             printf("Modo2 configurado\n");
-        startModoDefault(puertoS);
+        startModoDefault();
         break;
 
     case MODO_TEST_9:
@@ -151,10 +162,16 @@ main (int argc, char const *argv[])
 
     case MODO_1:
     default:
+    letra = "1";
+        while(*letra){       
+            LCD_dato(*letra++);   // car·cter a car·cter
+            usleep(20000);        // Mantenemos el mensaje 1 segundo
+        }
         configModo1();
+        
         if (DEBUG)
             printf("Modo1 configurado\n");
-        startModoDefault(puertoS);
+        startModoDefault();
         if (DEBUG)
             printf("Modo1 empezado \n");
         break;

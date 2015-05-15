@@ -4,5 +4,8 @@
 
 void set16_puertoS (UWORD valor) {
 	DAC_dato((int)valor);
+}
 
+UWORD* get_puertoS() {
+	return 0x0000;
 }

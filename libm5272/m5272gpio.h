@@ -13,6 +13,8 @@ UBYTE lee_puerto1(void);
 void set_puerto1 (UBYTE valor);
 void set_puerto0 (UBYTE valor);
 void set_led(UWORD valor);
+UWORD get16_puertoS();
+void set_gpio(int gpio, int valor);
 
 #endif
 
