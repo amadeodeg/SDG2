@@ -26,6 +26,16 @@ int numMuestrasLeidas;
 int modFrecCos[NUM_FREC_MUESTREADAS];
 int modFrecSen[NUM_FREC_MUESTREADAS];
 
+
+//Variables inventadas para la forma 2 del calculo
+int *pSin[NUM_FREC_MUESTREADAS], *pCos[NUM_FREC_MUESTREADAS]; //array de punteros que guardan el proximo valor por el que se multiplicara
+int paso_frecs[NUM_FREC_MUESTREADAS]; //array que guarda el salto dentro del array de 10hz, sera el array de frecuencias/10
+
+
+
+
+
+
 //Primera muestra 0
 inline int calculaSeno(int frecuencia, int muestra){
 	int M = frecuencia/10;  //10Hz seno conocido
@@ -63,6 +73,66 @@ inline void calculaModuloDFT(int muestraADC){
 	}
 	set_gpio(4, 1);
 }
+
+
+
+
+
+//FUNCIONES NUEVAS a su estilo (que conste que no me mola nada)
+
+//llamar a esta funcion antes de configurar la interrupcion periodica, en la config del modo
+void configPasoFrecPointers(){
+	for (int i = 0; i < NUM_FREC_MUESTREADAS; i++)
+	{
+		paso_frecs[i]=(frecuenciasMuestreo[i]/10);
+		pSin[i]=sinusoide10Hz;
+		pCos[i]=sinusoide10Hz+NUM_MUESTRAS_PERIODO_10HZ/4;
+	}
+}
+
+void calculaModuloDFT2(int muestraADC){
+	int i;
+
+	for (i = 0; i < NUM_FREC_MUESTREADAS; i++)
+	{
+		modFrecCos[i]+= muestraADC * (*(pCos[i]));
+		modFrecSen[i]+= muestraADC * (*(pSin[i]));
+
+		pSin[i] += paso_frecs[i];
+		pCos[i] += paso_frecs[i];
+		if (pSin[i] >= (sinusoide10Hz+NUM_FREC_MUESTREADAS))
+			pSin[i]-=NUM_FREC_MUESTREADAS;
+		if (pCos[i] >= (sinusoide10Hz+NUM_FREC_MUESTREADAS))
+			pCos[i]-=NUM_FREC_MUESTREADAS;
+	}
+
+
+
+	numMuestrasLeidas++;
+	if (numMuestrasLeidas>=NUM_MUESTRAS_CALCULO){
+		int i;
+		for(i=0;i<NUM_FREC_MUESTREADAS;i++){
+			modFrecCos[i]=modFrecCos[i]>>10;   //equivalente a /1024 pero porsiaca
+			modFrecSen[i]=modFrecSen[i]>>10;
+			modFrecTot[i]=modFrecCos[i]*modFrecCos[i]+modFrecSen[i]*modFrecSen[i];
+
+			modFrecCos[i]=0;
+			modFrecSen[i]=0;
+		}
+		numMuestrasLeidas=0;
+	}
+
+
+}
+
+
+
+
+
+
+
+
+
 
 int mod2esc(int *modulo){
 
