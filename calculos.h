@@ -13,6 +13,9 @@ void creaArrayFrecuencias(int inicial, int final);
 
 int* getPmodFrecTot(void);
 
+void configPasoFrecPointers();
+void calculaModuloDFT2(int muestraADC);
+
 extern int modFrecTot[NUM_FREC_MUESTREADAS]; 
 
 #endif

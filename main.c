@@ -94,6 +94,7 @@ configMinima ()
 void
 configModo1 ()
 {
+    configPasoFrecPointers();
     configInt4k();
 }
 

@@ -29,8 +29,8 @@
 static int bit = 0;
 void __attribute__ ((interrupt_handler)) isr_timer1(void){
   mbar_writeShort(MCFSIM_TER0,BORRA_REF);
-  set_gpio(4, 0);
-	calculaModuloDFT(ADC_dato());
+  //set_gpio(4, 0);
+	calculaModuloDFT2(ADC_dato());
   set16_puertoS((get16_puertoS() & ~(1 << 5)) | (bit << 5));
   bit = !bit;
 }

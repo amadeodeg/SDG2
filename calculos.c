@@ -38,15 +38,23 @@ int paso_frecs[NUM_FREC_MUESTREADAS]; //array que guarda el salto dentro del arr
 
 //Primera muestra 0
 inline int calculaSeno(int frecuencia, int muestra){
-	int M = frecuencia/10;  //10Hz seno conocido
+	//int M = frecuencia/10;  //10Hz seno conocido
 	//printf("valorSeno:  %4d frecuencia: %4d muestra: %2d\n", sinusoide10Hz[M*muestra%SIZE(sinusoide10Hz)],frecuencia,muestra);
-	return sinusoide10Hz[M*muestra%SIZE(sinusoide10Hz)];
+	return sinusoide10Hz[paso_frecs[frecuencia]*muestra%400];
+	// int tam;
+	// int numero = paso_frecs[frecuencia]*muestra;
+	// set_gpio(4, 1);
+	// tam= SIZE(sinusoide10Hz);
+	// set_gpio(4, 0);
+	// numero= numero%tam;
+	
+	// return sinusoide10Hz[numero];
 	
 }
 
 inline int calculaCoseno(int frecuencia, int muestra){
-	int M = frecuencia/10;
-	return sinusoide10Hz[(M*muestra+(NUM_MUESTRAS_PERIODO_10HZ/4))%SIZE(sinusoide10Hz)];
+	//int M = frecuencia/10;
+	return sinusoide10Hz[(paso_frecs[frecuencia]*muestra+100)%400];
 }
 
 inline void calculaModuloDFT(int muestraADC){
@@ -54,8 +62,8 @@ inline void calculaModuloDFT(int muestraADC){
 	//if (DEBUG) printf("%d\n", muestraADC);
 	set_gpio(4, 1);
 	for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-		modFrecCos[i]=modFrecCos[i]+muestraADC*calculaCoseno(frecuenciasMuestreo[i],numMuestrasLeidas);
-		modFrecSen[i]=modFrecSen[i]+muestraADC*calculaSeno(frecuenciasMuestreo[i],numMuestrasLeidas);
+		modFrecCos[i]=modFrecCos[i]+muestraADC*calculaCoseno(i,numMuestrasLeidas);
+		modFrecSen[i]=modFrecSen[i]+muestraADC*calculaSeno(i,numMuestrasLeidas);
 	}
 	set_gpio(4, 0);
 	numMuestrasLeidas++;
@@ -71,7 +79,7 @@ inline void calculaModuloDFT(int muestraADC){
 		}
 		numMuestrasLeidas=0;
 	}
-	set_gpio(4, 1);
+	//set_gpio(4, 1);
 }
 
 
@@ -81,8 +89,22 @@ inline void calculaModuloDFT(int muestraADC){
 //FUNCIONES NUEVAS a su estilo (que conste que no me mola nada)
 
 //llamar a esta funcion antes de configurar la interrupcion periodica, en la config del modo
+void actualizaMierdasVarias(int i){
+	pSin[i] += paso_frecs[i];
+	pCos[i] += paso_frecs[i];
+	if (pSin[i] >= (sinusoide10Hz+NUM_MUESTRAS_PERIODO_10HZ)){
+		pSin[i]-=NUM_MUESTRAS_PERIODO_10HZ;
+	}
+	if (pCos[i] >= (sinusoide10Hz+NUM_MUESTRAS_PERIODO_10HZ)){
+		pCos[i]-=NUM_MUESTRAS_PERIODO_10HZ;
+	}
+	//pSin[i]=sinusoide10Hz+((pSin[i]-sinusoide10Hz)%400);
+	//pCos[i]=sinusoide10Hz+((pCos[i]-sinusoide10Hz)%400);
+}
+
 void configPasoFrecPointers(){
-	for (int i = 0; i < NUM_FREC_MUESTREADAS; i++)
+	int i;
+	for (i = 0; i < NUM_FREC_MUESTREADAS; i++)
 	{
 		paso_frecs[i]=(frecuenciasMuestreo[i]/10);
 		pSin[i]=sinusoide10Hz;
@@ -93,19 +115,15 @@ void configPasoFrecPointers(){
 void calculaModuloDFT2(int muestraADC){
 	int i;
 
+	set_gpio(4, 1);
 	for (i = 0; i < NUM_FREC_MUESTREADAS; i++)
 	{
-		modFrecCos[i]+= muestraADC * (*(pCos[i]));
-		modFrecSen[i]+= muestraADC * (*(pSin[i]));
+		modFrecCos[i]+= muestraADC * (*pCos[i]);
+		modFrecSen[i]+= muestraADC * (*pSin[i]);
 
-		pSin[i] += paso_frecs[i];
-		pCos[i] += paso_frecs[i];
-		if (pSin[i] >= (sinusoide10Hz+NUM_FREC_MUESTREADAS))
-			pSin[i]-=NUM_FREC_MUESTREADAS;
-		if (pCos[i] >= (sinusoide10Hz+NUM_FREC_MUESTREADAS))
-			pCos[i]-=NUM_FREC_MUESTREADAS;
+		actualizaMierdasVarias(i);
 	}
-
+	set_gpio(4, 0);
 
 
 	numMuestrasLeidas++;
