@@ -6,6 +6,10 @@ void set16_puertoS (UWORD valor) {
 	DAC_dato((int)valor);
 }
 
-UWORD* get_puertoS() {
+UWORD get16_puertoS() {
 	return 0x0000;
+}
+
+void set_gpio(int gpio, int valor){
+	DAC_dato(valor);
 }

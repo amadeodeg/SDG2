@@ -7,6 +7,7 @@
 #include "m5272lcd.h"
 #include "m5272lib.h"
 #include <time.h>
+#include <unistd.h>
 #include <stdint.h>
 
 #define DEBUG 1
@@ -14,40 +15,53 @@
 #define MODO_RANGO_2 2
 #define MODO_TEST_9 9
 #define MODO_TEST_8 8
-#define PIN_RAMPA 16 //PIN 4
+#define PIN_RAMPA 4 
 #define FREC_TEST 100
 
 
 void
 startModoDefault ()
 {
+     int i;
+     int dato;
+     int us = (T_PANTALLA/NUM_FREC_MUESTREADAS)*1000-14;
+     //int numero = 3317;
+     int * modFrecTot = getPmodFrecTot();
     //struct timespec timePulse = {0, 1000000};
     while(1) {
-    //     //struct timespec t1, t2;
-    //     int i;
-    //     struct timespec ts;
+        //struct timespec t1, t2;
+       
+        //struct timespec ts;
          
-     //    int ms = T_PANTALLA/NUM_FREC_MUESTREADAS*100;
 		
-    //     //current_utc_time(&t1);
-    //     for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
-    //         //if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
-    //         DAC_dato(mod2esc(getPmodFrecTot()+i));
-
-    //         ts.tv_sec = ms / 1000;
-    //         ts.tv_nsec = (ms % 1000) * 1000000;
-    //         nanosleep(&ts, NULL);
-    //     }
-    //     //current_utc_time(&t2);
-    //     //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
-    //     //reset bit inico rampa
-		usleep(40000);
-        set16_puertoS( (get16_puertoS()) | 0x0010);  //bit 4 a uno el resto como estaba
+        //current_utc_time(&t1);
+        for (i = 0; i < NUM_FREC_MUESTREADAS; i++){
+            //if (DEBUG) printf("Frec: %d Dato: %d\n", i, mod2esc(getPmodFrecTot()+i));
+            set_gpio(5,1);
+            dato = mod2esc(modFrecTot+i); 
+            cli(); //COMENTAR PARA SIM
+            //if (DEBUG) printf("%d, ", ADC_dato());
+            
+            DAC_dato(dato); //~8us
+            
+            sti(); //COMENTAR PARA SIM
+            
+            // ts.tv_sec = ms / 1000;
+            // ts.tv_nsec = (ms % 1000) * 1000000;
+            // nanosleep(&ts, NULL);
+            set_gpio(5,0);
+            usleep(us);
+        }
+        //current_utc_time(&t2);
+        //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
+        //reset bit inico rampa
+		//usleep(40000);
+        set_gpio(PIN_RAMPA, 1);  //bit 4 a 1 el resto como estaba
         //nanosleep(&timePulse, NULL);
         //if(DEBUG) printf("me duermo\n");
         usleep(1000);
         //if(DEBUG) printf("me despierto\n");
-        set16_puertoS( (get16_puertoS()) & ~0x0010); //bit 4 a 0 resto como estaba
+        set_gpio(PIN_RAMPA, 0); //bit 4 a 0 resto como estaba
         
      }
 }
@@ -83,7 +97,7 @@ configMinima ()
      //   printf("GPIO configurado\n");
     DAC_ADC_init();
     if (DEBUG)
-        printf("DAC configurado\n");
+        printf("DAC_ADC configurado\n");
     LCD_reset();
     LCD_init();
     if (DEBUG)

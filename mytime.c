@@ -20,3 +20,4 @@ void current_utc_time(struct timespec *ts) {
 float diff(struct timespec t1, struct timespec t2){
 	return MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec;
 }
+

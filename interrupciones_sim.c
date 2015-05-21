@@ -39,7 +39,7 @@ static void* int_sim (void* arg){
     //   //printf("%f\n", MIL_MILLONES * (t2.tv_sec - t1.tv_sec) + t2.tv_nsec - t1.tv_nsec);
     //   t1 = t2;
     // }
-    calculaModuloDFT(ADC_dato());
+    calculaModuloDFT2(ADC_dato());
   }
   return NULL;
 }

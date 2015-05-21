@@ -52,7 +52,7 @@ inline int calculaSeno(int frecuencia, int muestra){
 	
 }
 
-inline int calculaCoseno(int frecuencia, int muestra){
+int calculaCoseno(int frecuencia, int muestra){
 	//int M = frecuencia/10;
 	return sinusoide10Hz[(paso_frecs[frecuencia]*muestra+100)%400];
 }
@@ -89,7 +89,7 @@ inline void calculaModuloDFT(int muestraADC){
 //FUNCIONES NUEVAS a su estilo (que conste que no me mola nada)
 
 //llamar a esta funcion antes de configurar la interrupcion periodica, en la config del modo
-void actualizaMierdasVarias(int i){
+void actualizaMierdasVarias(int i){ 
 	pSin[i] += paso_frecs[i];
 	pCos[i] += paso_frecs[i];
 	if (pSin[i] >= (sinusoide10Hz+NUM_MUESTRAS_PERIODO_10HZ)){
@@ -115,7 +115,7 @@ void configPasoFrecPointers(){
 void calculaModuloDFT2(int muestraADC){
 	int i;
 
-	set_gpio(4, 1);
+	//set_gpio(4, 1);
 	for (i = 0; i < NUM_FREC_MUESTREADAS; i++)
 	{
 		modFrecCos[i]+= muestraADC * (*pCos[i]);
@@ -123,7 +123,7 @@ void calculaModuloDFT2(int muestraADC){
 
 		actualizaMierdasVarias(i);
 	}
-	set_gpio(4, 0);
+	
 
 
 	numMuestrasLeidas++;
@@ -139,7 +139,7 @@ void calculaModuloDFT2(int muestraADC){
 		}
 		numMuestrasLeidas=0;
 	}
-
+	//set_gpio(4, 0);
 
 }
 

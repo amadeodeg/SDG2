@@ -121,7 +121,7 @@ void DAC_dato(int dato)
 
 void ADC_escribeTxRAM(){
   mbar_writeShort(MCFSIM_QAR, QSPI_TX_RAM_START); 	// Puntero a TX_RAM
-  mbar_writeShort(MCFSIM_QDR, 0x9F9F); 			// CH0,Unipolar,no-conv.diferencial,reloj externo
+  mbar_writeShort(MCFSIM_QDR, 0x9797); 			// CH0,bipolar,no-conv.diferencial,reloj externo
   mbar_writeShort(MCFSIM_QDR, 0x0000); 			// Dummy
   mbar_writeShort(MCFSIM_QDR, 0x0000);			// Dummy
 }
@@ -135,7 +135,7 @@ void ADC_escribeCommandRAM(){
 
 int ADC_leeRxRAM(){
 
-  int dato1, dato2, datoLeido;
+  int dato1, dato2, datoLeido, bit;
 
   mbar_writeShort(MCFSIM_QAR, QSPI_RX_RAM_START);	// Puntero a RX_RAM
   mbar_readShort(MCFSIM_QDR); 				// Se ignora el primer dato
@@ -153,7 +153,11 @@ int ADC_leeRxRAM(){
   datoLeido += dato1 << 5;	// a partir de dato1 y dato2
 
   // datoLeido = (datoLeido << 1); // Para igualar la escala con el DAC (Vmax(DAC)=2.5V;Vmax(ADC)=5.00V)
- 
+  bit = (datoLeido >> 11);
+  if (bit == 1)
+    {datoLeido += (0xFFFFF << 12);}
+  if (bit == 0)
+    {datoLeido += (0x00000 << 12); }
   return datoLeido;
 }
 

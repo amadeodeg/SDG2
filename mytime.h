@@ -10,3 +10,6 @@
 #define MIL_MILLONES 1E9
 
 void current_utc_time(struct timespec *ts);
+#ifndef usleep
+//void usleep(int useconds);
+#endif
