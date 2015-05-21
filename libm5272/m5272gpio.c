@@ -177,7 +177,9 @@ void set_led(UWORD valor)
   set_puerto0(valor|(valor<<4));
 }
 
-void set_gpio(int gpio, int valor) {
+//Pone un 0 o 1 en un pin especificado. Lo enmascara para no modificar los bits que se usan.
+void set_gpio(int gpio, int valor) 
+{
   set16_puertoS((get16_puertoS() & ~(1 << gpio)) | (valor << gpio)); //Pone valor en gpio
 }
 

@@ -11,25 +11,38 @@
 FILE *in;
 FILE *out;
 
-void DAC_ADC_init(){
+//Abre ficheros de datos.
+void 
+DAC_ADC_init ()
+{
 	in=fopen(PATH_IN,"r");
 	out=fopen(PATH_OUT,"w");
 }
 
-void DAC_dato(int dato){
-
-	if(out==NULL){
+//Escribe en el fichero de salida.
+void 
+DAC_dato (int dato)
+{
+	if (out==NULL)
+	{
 		perror("error: intento escribir en un fichero cerrado.");
 		return;
 	}
 	fprintf(out, "%d\n", dato);
-	if (DEBUG) printf("Escrito: %d\n", dato);
+	if (DEBUG) 
+	{
+		printf("Escrito: %d\n", dato);
+	}
 	fflush(out);
 }
 
-int ADC_dato(){
+//Lee del fichero de entrada
+int 
+ADC_dato ()
+{
 	int dato;
-	if(in==NULL){
+	if (in==NULL) 
+	{
 		perror("error: intento leer en un fichero cerrado.");
 		return -1;
 	}

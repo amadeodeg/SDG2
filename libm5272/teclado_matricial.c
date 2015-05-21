@@ -19,8 +19,8 @@
 // char teclado(void)
 //
 // Descripción:
-//   Explora el teclado matricial y devuelve la tecla
-//   pulsada
+//   Explora el teclado matricial y devuelve el caracter 
+//   de la tecla pulsada
 //------------------------------------------------------
 int get_tecla(void)
 {
@@ -60,12 +60,16 @@ int get_tecla(void)
   // Reiniciamos exploración
 }
 
-int get_numero_teclado(void){
-   int tecla = 0;
-  // int aux;
-  // while ( (aux = get_tecla() - '0') < 10){ 
-  //   tecla = tecla*10 + aux;
-  // }
+//Devuelve el entero de varias cifras al pulsar varias teclas sucesivas.
+//Para señalar el fin del numero, pulsar cualquier letra. No devuelve letras.
+int 
+get_numero_teclado(void)
+{
+  int aux;
+  int tecla = 0;
+  while ( (aux = get_tecla() - '0') < 10){ 
+    tecla = tecla*10 + aux;
+  }
   return tecla;
 }
 

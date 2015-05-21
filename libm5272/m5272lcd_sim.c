@@ -1,15 +1,24 @@
 #include <stdio.h>
 #include "m5272lcd.h"
 
-void LCD_write(UWORD dato, LCD_TIPO tipo){
+//Escribe un caracter por pantalla.
+void LCD_write(UWORD dato, LCD_TIPO tipo)
+{
 	printf("%c\n", (char)dato);
 }
-void LCD_init(){
 
+//Para mantener compatibilidad en simulacion.
+void LCD_init()
+{
 }
-void LCD_reset(){
 
+//Para mantener compatibilidad en simulacion.
+void LCD_reset()
+{
 }
-void LCD_write_s(char* s){
+
+//Escribe un string por pantalla.
+void LCD_write_s(char* s)
+{
 	printf("%s\n", s);
 }

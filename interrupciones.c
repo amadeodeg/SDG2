@@ -1,15 +1,14 @@
-#include "calculos.h" //Funciones llamadas en atencion a la interrupcion
+#include "calculos.h" 
 #include "m5272adc_dac.h"
 #include "m5272.h"
 #include "m5272lib.h"
 #include <stdint.h>
 #include "m5272gpio.h"
-//TODO include
+
 
 #ifndef DATOS
 
 #define DIR_VTMR1 4*(V_BASE+6)
-//#define CNT_INT1 MCF_CLK/(FREC_INT*0x50*16)
 
 #define V_BASE 0x40   //Direccion inicio (base) de vector interrupciones
 #define DIR_VTMR0 4*(V_BASE+5)	//Direccion del vector de timer0
@@ -21,20 +20,17 @@
 #error PRESCALADO demasiado pequeño para la frecuencia pedida(CNT_INIT1>0xFFFF)
 #endif
 
-#define BORRA_REF 0x0002	//TODO que es esto?
+#define BORRA_REF 0x0002
 
 
 #endif
 
-//static int bit = 0;
-void __attribute__ ((interrupt_handler)) isr_timer1(void){
+//Funcion de atencion a la interrupcion.
+void __attribute__ ((interrupt_handler)) isr_timer0(void)
+{
   mbar_writeShort(MCFSIM_TER0,BORRA_REF);
-  //set_gpio(4, 0);
-	calculaModuloDFT2(ADC_dato());
-  //set16_puertoS((get16_puertoS() & ~(1 << 5)) | (bit << 5));
-  //bit = !bit;
+	calculaModuloDFT(ADC_dato());
 }
-
 
 //------------------------------------------------------
 // void __init(void)
@@ -47,9 +43,9 @@ void configInt4k(void)
   // Fija comienzo de vectores de interrupción en V_BASE.
   mbar_writeByte(MCFSIM_PIVR, V_BASE);
   // Escribimos la dirección de la función para TMR0
-  ACCESO_A_MEMORIA_LONG(DIR_VTMR0) = (ULONG)isr_timer1;
+  ACCESO_A_MEMORIA_LONG(DIR_VTMR0) = (ULONG)isr_timer0;
   // TMR0: PS=0x50-1 CE=00 OM=1 ORI=1 FRR=1 CLK=10 RST=1
-  mbar_writeShort(MCFSIM_TMR0, (PRESCALADO-1)<<8|0x3D); //0x4F3D);
+  mbar_writeShort(MCFSIM_TMR0, (PRESCALADO-1)<<8|0x3D); 
   // Ponemos a 0 el contador del TIMER0
   mbar_writeShort(MCFSIM_TCN0, 0x0000);
   // Fijamos la cuenta final del contador

@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 #include "m5272lcd.h"
 #include <unistd.h>
+#include <time.h>
 
 void set16_puertoS (UWORD valor);
 
@@ -71,11 +72,13 @@ void LCD_reset()
 
 
 
-//Funcion definida por Amadeo y Daniel
+//Escribe un array en el LCD.
 
-void LCD_write_s(char* s){
+void 
+LCD_write_s(char* s)
+{
   while(*s){
-    LCD_write((UWORD)*s, LCD_CHAR);
-    s++;
+    LCD_dato((UWORD)*s++);
+    usleep(RET_15MS);
   }
 }

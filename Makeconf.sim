@@ -3,11 +3,11 @@ SIM=_sim
 
 CC=gcc
 
-CFLAGS=-g -Wall  -I. -Ilibm5272
+CFLAGS=-g -Wall  -I. -Ilibm5272 '-Dcli()=' '-Dsti()=' 
 LDLIBS=-Llibm5272 -lm5272$(SIM) $(ARCH_LDLIBS)
 
-SOURCES =  	mytime.c \
-			tasks.c 
+SOURCES = mytime.c \
+	  tasks.c 
 
 
 

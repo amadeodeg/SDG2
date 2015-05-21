@@ -1,4 +1,3 @@
-
 CC=gcc
 
 CFLAGS=-g -Wall -Werror -lm
@@ -10,5 +9,5 @@ sin:
 	gcc -o sin sin.c
 
 clean:
-	$(RM) *.o sin
+	$(RM) *.o sin ADC_in.txt
 
