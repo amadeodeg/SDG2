@@ -15,7 +15,7 @@ SUBDIRS = \
 		libm5272
 
 
-all: clean libs main
+all: clean main
 
 main: $(OBJECTS)
 
